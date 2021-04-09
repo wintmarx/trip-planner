@@ -1,8 +1,9 @@
 module.exports = {
+  pathPrefix: "/trip-planner",
   siteMetadata: {
-    title: `Gatsby Default Starter`,
-    description: `Kick off your next, great Gatsby project with this default starter. This barebones starter ships with the main Gatsby configuration files you might need.`,
-    author: `@gatsbyjs`,
+    title: `Trip Planner`,
+    description: `Guide for you trip.`,
+    author: `FredieJackson`,
   },
   plugins: [
     `gatsby-plugin-react-helmet`,

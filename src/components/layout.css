@@ -19,6 +19,13 @@ body {
   -webkit-font-feature-settings: "kern", "liga", "clig", "calt";
   font-feature-settings: "kern", "liga", "clig", "calt";
 }
+html, body, #root {
+  height: 100%;
+}
+#root {
+  display: flex;
+  flex-direction: column;
+ }
 article,
 aside,
 details,
@@ -590,6 +597,21 @@ pre tt:before,
 pre tt:after {
   content: "";
 }
+
+.page {
+  display: flex;
+  min-height: 100vh;
+  flex-direction: column;
+}
+
+.content {
+  flex: 1 0 auto;
+  margin: 0 auto;
+  width: 100%;
+  max-width: 960px;
+  padding: 1.5rem 1.0875rem;
+}
+
 @media only screen and (max-width: 480px) {
   html {
     font-size: 100%;
