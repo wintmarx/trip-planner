@@ -23,7 +23,7 @@ interface IState {
     checkboxes: CheckboxState[]
 }
 
-export default class PictureSelector extends React.Component<IProps, IState> {
+export default class PlaceSelector extends React.Component<IProps, IState> {
     constructor(props: IProps) {
         super(props)
 
@@ -54,13 +54,18 @@ export default class PictureSelector extends React.Component<IProps, IState> {
     }
 
     renderCheckboxes() {
-        const { checkboxes } = this.state
-
-        return checkboxes
+        return this.state.checkboxes
             .map((checkbox, index) =>
                 <div key={index}>
                     <FormControlLabel
-                        control={<Checkbox icon={<FavoriteBorder />} checkedIcon={<Favorite />} checked={checkbox.checked} onChange={this.toggleCheckbox.bind(this, index)} />}
+                        control={
+                            <Checkbox
+                                icon={<FavoriteBorder />}
+                                checkedIcon={<Favorite />}
+                                checked={checkbox.checked}
+                                onChange={this.toggleCheckbox.bind(this, index)}
+                            />
+                        }
                         label={checkbox.label}
                     />
                 </div>

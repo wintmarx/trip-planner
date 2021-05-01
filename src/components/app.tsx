@@ -3,7 +3,7 @@ import { TagsSelector, Tags } from './tags-selector'
 import Final from './final'
 import Greetings from './greetings'
 import Layout from './layout'
-import PictureSelector from './picture-selector'
+import PlaceSelector from './place-selector'
 import { useStaticQuery, graphql } from 'gatsby'
 
 enum Page {
@@ -62,7 +62,7 @@ export class App extends React.Component<IProps, IState> {
             <Layout>
                 {this.state.page == Page.Greetings && <Greetings onExitCb={this.onGreetingsClosed} />}
                 {this.state.page == Page.Activities && <TagsSelector tags={this.props.tags} onExitCb={this.onActivitiesClosed} />}
-                {this.state.page == Page.Pictures && <PictureSelector selTags={this.state.selTags} places={this.props.places} onExitCb={this.onPicturesClosed} />}
+                {this.state.page == Page.Pictures && <PlaceSelector selTags={this.state.selTags} places={this.props.places} onExitCb={this.onPicturesClosed} />}
                 {this.state.page == Page.Final && <Final onExitCb={this.onFinalClosed} />}
             </Layout>
         );
