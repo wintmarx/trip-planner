@@ -62,27 +62,16 @@ const IndexPage: React.FC = () => (<StaticQuery
             themes: keys.slice(delPos + 1)
         }
         const places: PlaceData[] =
-            activitiesCsv.map((el: ActivityCsv) => {
-                var data: PlaceData = {
-                    name: el.name,
-                    description: el.description,
-                    photo: el.photo,
-                    time_to_visit: el.time_to_visit,
-                    tags: { places: [], themes: [] }
+            activitiesCsv.map((el: ActivityCsv) => ({
+                name: el.name,
+                description: el.description,
+                photo: el.photo,
+                time_to_visit: el.time_to_visit,
+                tags: {
+                    places: tags.places.filter(placeTag => el[placeTag] == '+'),
+                    themes: tags.themes.filter(themeTag => el[themeTag] == '+')
                 }
-                tags.places.forEach(placeTag => {
-                    if (el[placeTag] == '+') {
-                        data.tags.places.push(placeTag)
-                    }
-                })
-
-                tags.themes.forEach(themeTag => {
-                    if (el[themeTag] == '+') {
-                        data.tags.themes.push(themeTag)
-                    }
-                })
-                return data
-            })
+            } as PlaceData))
 
         return <App places={places} tags={tags} />
     }}
