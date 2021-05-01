@@ -58,14 +58,18 @@ export class TagsSelector extends React.Component<IProps, IState> {
     }
 
     renderCheckboxes(chkName: string) {
-        const key = chkName as keyof IState
-        const chks = this.state[key]
-
-        return chks
+        return this.state[chkName as keyof IState]
             .map((checkbox, index) =>
                 <div key={index}>
                     <FormControlLabel
-                        control={<Checkbox icon={<FavoriteBorder />} checkedIcon={<Favorite />} checked={checkbox.checked} onChange={this.toggleCheckbox.bind(this, chkName, index)} />}
+                        control={
+                            <Checkbox
+                                icon={<FavoriteBorder />}
+                                checkedIcon={<Favorite />}
+                                checked={checkbox.checked}
+                                onChange={this.toggleCheckbox.bind(this, chkName, index)}
+                            />
+                        }
                         label={checkbox.label}
                     />
                 </div>
