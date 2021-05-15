@@ -15,8 +15,3 @@
   flex-wrap: wrap;
   gap: 2vw;
 }
-
-.places-btn {
-  margin: 2rem 0 0 0 !important;
-  float: right;
-}

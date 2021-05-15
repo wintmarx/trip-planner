@@ -5,6 +5,7 @@ import { PlaceData } from "./app"
 import i18n from "../i18n/ru.json"
 import "../css/place-selector.css"
 import PlaceCard from "./place-card"
+import Timeline from "./timeline"
 
 type PlaceState = {
   checked: boolean
@@ -90,14 +91,38 @@ export default class PlaceSelector extends React.Component<IProps, IState> {
     ))
   }
 
+  getConsumedTime() {
+    var time = 0
+    this.state.cards
+      .filter(card => card.checked)
+      .forEach(it => (time += it.placeData.ttv))
+    return time
+  }
+
+  isTimelineHidden() {
+    return this.getConsumedTime.call(this) == 0
+  }
+
   render() {
     return (
       <>
         <h3 className="places-header">{i18n["select_places"]}</h3>
-        <div className="cards-container">{this.renderCards.call(this)}</div>
-        <ThemeButton className="places-btn" onClick={this.props.onExitCb}>
-          {i18n["next_page"]} →
-        </ThemeButton>
+        <div
+          style={{
+            marginBottom: `${
+              this.isTimelineHidden.call(this) ? "inherit" : "max(10vh, 100px)"
+            }`,
+          }}
+          className="cards-container"
+        >
+          {this.renderCards.call(this)}
+        </div>
+        <Timeline
+          hidden={this.isTimelineHidden.call(this)}
+          time={this.getConsumedTime.call(this)}
+          dayTime={600}
+          onExitCb={this.props.onExitCb}
+        />
       </>
     )
   }
