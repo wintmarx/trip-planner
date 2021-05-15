@@ -11,6 +11,7 @@
     "min":"мин",
     "trip_length":"Длительность маршрута",
     "all_day": "Сутки",
+    "overflow_day": "д",
     "info_header": "Что это за место?",
     "incorrect_email":"Некорректный email",
     "final_header":"Готово!",

@@ -28,8 +28,15 @@
 
 .time-bar-container {
   width: 100%;
+  flex: 5;
 }
 
+.timeline-side {
+  width: 100%;
+  flex: 1;
+}
+
+.timeline-side-bar,
 .time-bar {
   position: relative;
   width: 90%;
@@ -38,6 +45,7 @@
   overflow: hidden;
 }
 
+.timeline-side > p,
 .time-bar-container > div > p {
   font-family: var(--theme-font-family);
   color: var(--text-color);
@@ -45,19 +53,20 @@
   font-size: 20px;
   line-height: 25px;
   font-weight: 600;
-  flex: 1;
+}
+
+.timeline-side > p {
+  margin: 0 0 0.5rem 0;
 }
 
 .time-bar-container > div > p:nth-child(2) {
   font-size: 12px;
   line-height: 15px;
   opacity: 0.7;
-  text-align: center;
 }
 
 .time-bar-container > div > p:last-child {
   opacity: 0.5;
-  text-align: right;
 }
 
 .time-bar-outer {
@@ -75,6 +84,10 @@
   background: var(--main-color);
   opacity: 1;
   transition: width 500ms;
+}
+
+.timeline-side-bar {
+  background: var(--main-color);
 }
 
 .bar-header {
