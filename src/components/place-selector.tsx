@@ -1,9 +1,10 @@
-import React, { MouseEventHandler } from "react"
+import React from "react"
 import { ThemeButton } from "./theme-button"
 import { Tags } from "./app"
 import { PlaceData } from "./app"
 import i18n from "../i18n/ru.json"
 import "../css/place-selector.css"
+import PlaceCard from "./place-card"
 
 type PlaceState = {
   checked: boolean
@@ -19,7 +20,7 @@ interface IProps {
 }
 
 interface IState {
-  checkboxes: PlaceState[]
+  cards: PlaceState[]
   infoIndex: number
 }
 
@@ -47,7 +48,7 @@ export default class PlaceSelector extends React.Component<IProps, IState> {
       return dict[b.name] - dict[a.name]
     })
 
-    const checkboxes: PlaceState[] = sorted.map(
+    const cards: PlaceState[] = sorted.map(
       place =>
         ({
           checked: false,
@@ -57,13 +58,13 @@ export default class PlaceSelector extends React.Component<IProps, IState> {
         } as PlaceState)
     )
 
-    this.state = { checkboxes: checkboxes, infoIndex: -1 }
+    this.state = { cards: cards, infoIndex: -1 }
   }
 
-  toggleCheckbox(index: number) {
-    const { checkboxes } = this.state
-    checkboxes[index].checked = !checkboxes[index].checked
-    this.setState({ checkboxes: checkboxes })
+  onCardClick(index: number, checked: boolean, e: any) {
+    const { cards } = this.state
+    cards[index].checked = checked
+    this.setState({ cards: cards })
   }
 
   onClickInfo(index: number, e: any) {
@@ -74,51 +75,18 @@ export default class PlaceSelector extends React.Component<IProps, IState> {
     this.setState({ infoIndex: index })
   }
 
-  renderCheckboxes() {
-    return this.state.checkboxes.map((checkbox, index) => (
-      <div
-        key={index}
-        className={`place-card ${
-          checkbox.checked ? "place-checked" : "card-grad"
-        }`}
-        onClick={this.toggleCheckbox.bind(this, index)}
-      >
-        {checkbox.checked && (
-          <img className="selected-icon" src="selected_icon.svg" />
-        )}
-        <img
-          className="info-icon"
-          src="info_icon.svg"
-          onClick={this.onClickInfo.bind(this, index)}
+  renderCards() {
+    return this.state.cards.map((checkbox, index) => (
+      <React.Fragment key={index}>
+        <PlaceCard
+          label={checkbox.label}
+          score={checkbox.score}
+          placeData={checkbox.placeData}
+          showInfo={index == this.state.infoIndex}
+          onInfoClick={this.onClickInfo.bind(this, index)}
+          onClick={this.onCardClick.bind(this, index)}
         />
-        <div className="card-img">
-          <img
-            src={`photo/${checkbox.placeData.photo}.jpg`}
-            alt={checkbox.label}
-          />
-        </div>
-        <div className="card-label">
-          <p className="debug-score">{`Score: ${checkbox.score}`}</p>
-          <div className="time-label">
-            <img src="time_icon.svg" />
-            <p>{`${checkbox.placeData.ttv} ${i18n["min"]}`}</p>
-          </div>
-          <p className="name-label">{checkbox.label}</p>
-        </div>
-        {index == this.state.infoIndex && (
-          <div className="info-card" onClick={e => e.stopPropagation()}>
-            <div>
-              <h1>{i18n["info_header"]}</h1>
-              <img
-                className="close-icon"
-                src="close_icon.svg"
-                onClick={this.onClickInfo.bind(this, index)}
-              />
-            </div>
-            <p>{checkbox.placeData.description}</p>
-          </div>
-        )}
-      </div>
+      </React.Fragment>
     ))
   }
 
@@ -126,10 +94,8 @@ export default class PlaceSelector extends React.Component<IProps, IState> {
     return (
       <>
         <h3 className="places-header">{i18n["select_places"]}</h3>
-        <div className="cards-container">
-          {this.renderCheckboxes.call(this)}
-        </div>
-        <ThemeButton className="place-btn" onClick={this.props.onExitCb}>
+        <div className="cards-container">{this.renderCards.call(this)}</div>
+        <ThemeButton className="places-btn" onClick={this.props.onExitCb}>
           {i18n["next_page"]} →
         </ThemeButton>
       </>
