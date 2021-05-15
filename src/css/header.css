@@ -1,0 +1,19 @@
+@import "./style.css";
+
+header > div {
+  margin: 0 auto;
+  max-width: var(--max-content-width);
+  padding: 1.45rem 1.0875rem 1.0875rem 1.0875rem;
+}
+
+header > div > h1 {
+  margin: 0;
+  color: var(--text-color);
+  font-family: var(--theme-font-family);
+  font-weight: 800;
+  font-size: 14px;
+  line-height: 17px;
+  text-transform: uppercase;
+  cursor: pointer;
+  display: inline;
+}

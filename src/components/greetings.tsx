@@ -1,24 +1,40 @@
 import React from "react"
-import Button from '@material-ui/core/Button';
+import { ThemeButton } from "./theme-button"
+import { StaticImage } from "gatsby-plugin-image"
+import i18n from "../i18n/ru.json"
+import "../css/greetings.css"
 
 interface IProps {
-    onExitCb: () => void
+  onExitCb: () => void
 }
 
 export default class Greetings extends React.Component<IProps> {
-    constructor(props: IProps) {
-        super(props)
-    }
+  constructor(props: IProps) {
+    super(props)
+  }
 
-    render() {
-        return (
-            <>
-                <h3 style={{ margin: 0, padding: '0.5rem 0' }}>Hello!</h3>
-                <h4 style={{ margin: 0, padding: '0.5rem 0' }}>We can help you to create the pefect trip!</h4>
-                <Button style={{ float: 'right' }} variant="outlined" color="secondary" onClick={this.props.onExitCb}>
-                    lets start
-                </Button>
-            </>
-        );
-    }
+  render() {
+    return (
+      <div className="greet-container">
+        <div className="greet-left-side">
+          <h1 className="greet-header">
+            {i18n["greeting_header_1st"]}
+            <br />
+            {i18n["greeting_header_2nd"]}
+          </h1>
+          <p className="greet-desc">{i18n["greeting_desc"]}</p>
+
+          <ThemeButton className="greet-btn" onClick={this.props.onExitCb}>
+            {i18n["create_trip_btn"]}
+          </ThemeButton>
+        </div>
+        <StaticImage
+          className="greet-img"
+          src="../images/illustration.svg"
+          alt=""
+          loading="eager"
+        />
+      </div>
+    )
+  }
 }

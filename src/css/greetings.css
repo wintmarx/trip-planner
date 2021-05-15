@@ -1,0 +1,63 @@
+@import "./style.css";
+
+.greet-container {
+  margin: 0;
+  z-index: 1;
+}
+
+.greet-left-side {
+  position: absolute;
+  margin-top: 13%;
+  z-index: 1;
+}
+
+.greet-header {
+  margin: 0;
+  padding: 0.5rem 0;
+  font-family: var(--theme-font-family);
+  font-weight: bold;
+  font-size: 50px;
+  line-height: 62px;
+  color: var(--text-color);
+}
+
+.greet-desc {
+  margin: 0.5rem 0 0 0;
+  padding: 0.5rem 0;
+  font-family: var(--theme-font-family);
+  font-size: 22px;
+  line-height: 27px;
+  color: var(--text-color);
+  opacity: 0.6;
+  max-width: 55%;
+}
+
+.greet-btn {
+  margin: 4rem 0 !important;
+}
+
+.greet-img {
+  margin: 0 auto;
+  position: relative;
+  margin-top: 20%;
+  left: 100%;
+  transform: translateX(-100%);
+  z-index: 0;
+  max-width: 60%;
+}
+
+@media screen and (max-width: 700px) {
+  .greet-img {
+    margin-top: 40%;
+  }
+}
+
+@media screen and (max-width: 500px) {
+  .greet-img {
+    margin-top: 50%;
+  }
+  .greet-btn {
+    left: 50%;
+    transform: translateX(-50%);
+  }
+}

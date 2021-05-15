@@ -1,0 +1,19 @@
+@font-face {
+  font-family: "Gilroy";
+  font-weight: 500;
+  src: local("Gilroy"),
+    url(../fonts/Gilroy/Gilroy-Medium.otf) format("opentype");
+}
+
+@font-face {
+  font-family: "Gilroy";
+  font-weight: 600;
+  src: local("Gilroy"),
+    url(../fonts/Gilroy/Gilroy-Semibold.otf) format("opentype");
+}
+
+@font-face {
+  font-family: "Gilroy";
+  font-weight: 700;
+  src: local("Gilroy"), url(../fonts/Gilroy/Gilroy-Bold.otf) format("opentype");
+}

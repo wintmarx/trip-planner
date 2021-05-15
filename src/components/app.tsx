@@ -1,70 +1,118 @@
-import React from 'react'
-import { TagsSelector, Tags } from './tags-selector'
-import Final from './final'
-import Greetings from './greetings'
-import Layout from './layout'
-import PlaceSelector from './place-selector'
-import { useStaticQuery, graphql } from 'gatsby'
+import React from "react"
+import TagsSelector from "./tags-selector"
+import Final from "./final"
+import Greetings from "./greetings"
+import Layout from "./layout"
+import PlaceSelector from "./place-selector"
+import i18n from "../i18n/ru.json"
 
 enum Page {
-    Greetings,
-    Activities,
-    Pictures,
-    Final
+  Greetings,
+  PlaceTags,
+  ThemeTags,
+  Places,
+  Final,
+}
+
+export type Tags = {
+  places: string[]
+  themes: string[]
 }
 
 export type PlaceData = {
-    name: string
-    description: string
-    photo: string
-    time_to_visit: number
-    tags: Tags
+  name: string
+  description: string
+  photo: string
+  ttv: number
+  tags: Tags
+  gmReviewsCnt: number
+  gmRating: number
+  taReviewsCnt: number
+  taRating: number
 }
 
 interface IProps {
-    places: PlaceData[]
-    tags: Tags
+  places: PlaceData[]
+  tags: Tags
 }
 
 interface IState {
-    page: Page
-    selTags: Tags
+  page: Page
+  selTags: Tags
 }
 
 export class App extends React.Component<IProps, IState> {
-    constructor(props: IProps) {
-        super(props)
-        this.onGreetingsClosed = this.onGreetingsClosed.bind(this)
-        this.onActivitiesClosed = this.onActivitiesClosed.bind(this)
-        this.onPicturesClosed = this.onPicturesClosed.bind(this)
-        this.onFinalClosed = this.onFinalClosed.bind(this)
-        this.state = { page: Page.Greetings, selTags: { places: [], themes: [] } }
-    }
+  constructor(props: IProps) {
+    super(props)
+    this.onGreetingsNext = this.onGreetingsNext.bind(this)
+    this.onPlaceTagsSelected = this.onPlaceTagsSelected.bind(this)
+    this.onThemeTagsSelected = this.onThemeTagsSelected.bind(this)
+    this.onPicturesClosed = this.onPicturesClosed.bind(this)
+    this.onFinalClosed = this.onFinalClosed.bind(this)
+    this.state = { page: Page.Greetings, selTags: { places: [], themes: [] } }
+  }
 
-    onGreetingsClosed() {
-        this.setState({ page: Page.Activities })
-    }
+  onGreetingsNext() {
+    this.setState({ page: Page.PlaceTags })
+  }
 
-    onActivitiesClosed(selTags: Tags) {
-        this.setState({ page: Page.Pictures, selTags: selTags })
-    }
+  onPlaceTagsSelected(selTags: string[]) {
+    this.setState({
+      page: Page.ThemeTags,
+      selTags: { places: selTags, themes: this.state.selTags.themes },
+    })
+  }
 
-    onPicturesClosed() {
-        this.setState({ page: Page.Final })
-    }
+  onThemeTagsSelected(selTags: string[]) {
+    this.setState({
+      page: Page.Places,
+      selTags: { places: this.state.selTags.places, themes: selTags },
+    })
+  }
 
-    onFinalClosed() {
-        this.setState({ page: Page.Greetings })
-    }
+  onPicturesClosed() {
+    this.setState({ page: Page.Final })
+  }
 
-    render() {
-        return (
-            <Layout>
-                {this.state.page == Page.Greetings && <Greetings onExitCb={this.onGreetingsClosed} />}
-                {this.state.page == Page.Activities && <TagsSelector tags={this.props.tags} onExitCb={this.onActivitiesClosed} />}
-                {this.state.page == Page.Pictures && <PlaceSelector selTags={this.state.selTags} places={this.props.places} onExitCb={this.onPicturesClosed} />}
-                {this.state.page == Page.Final && <Final onExitCb={this.onFinalClosed} />}
-            </Layout>
-        );
-    }
+  onFinalClosed() {
+    this.setState({ page: Page.Greetings })
+  }
+
+  render() {
+    return (
+      <Layout
+        headerCb={() => {
+          this.setState({ page: Page.Greetings })
+        }}
+      >
+        {this.state.page == Page.Greetings && (
+          <Greetings onExitCb={this.onGreetingsNext} />
+        )}
+        {this.state.page == Page.PlaceTags && (
+          <TagsSelector
+            tags={this.props.tags.places}
+            onExitCb={this.onPlaceTagsSelected}
+            header={i18n["select_place_tags"]}
+          />
+        )}
+        {this.state.page == Page.ThemeTags && (
+          <TagsSelector
+            tags={this.props.tags.themes}
+            onExitCb={this.onThemeTagsSelected}
+            header={i18n["select_theme_tags"]}
+          />
+        )}
+        {this.state.page == Page.Places && (
+          <PlaceSelector
+            selTags={this.state.selTags}
+            places={this.props.places}
+            onExitCb={this.onPicturesClosed}
+          />
+        )}
+        {this.state.page == Page.Final && (
+          <Final onExitCb={this.onFinalClosed} />
+        )}
+      </Layout>
+    )
+  }
 }

@@ -8,6 +8,7 @@
       // "checkJs": true,
       "jsx": "react",
       "strict": true,
+      "resolveJsonModule": true,
       "esModuleInterop": true,
       "moduleResolution": "node",
       "experimentalDecorators": true,

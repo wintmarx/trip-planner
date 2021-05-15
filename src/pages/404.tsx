@@ -1,9 +1,13 @@
-import { PageProps } from 'gatsby'
-import React from 'react'
+import { PageProps } from "gatsby"
+import React from "react"
 import Layout from "../components/layout"
 
 const Error404Page: React.FC<PageProps> = () => (
-  <Layout>
+  <Layout
+    headerCb={() => {
+      window.location.href = "/"
+    }}
+  >
     <h1>You are here!</h1>
     <h2>But nothing found for you #404</h2>
   </Layout>
