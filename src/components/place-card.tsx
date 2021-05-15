@@ -23,9 +23,10 @@ export default class PlaceCard extends React.Component<IProps, IState> {
   }
 
   onClick(e: any) {
-    this.setState({ checked: !this.state.checked })
-    if (this.props.onClick) {
-      this.props.onClick(this.state.checked, e)
+    const checked = !this.state.checked
+    this.setState({ checked: checked })
+    if (this.props.onClick !== undefined) {
+      this.props.onClick(checked, e)
     }
   }
 
