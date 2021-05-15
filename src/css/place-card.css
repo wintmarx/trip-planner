@@ -29,7 +29,7 @@
   transform: translateX(-100%);
   z-index: 4;
   padding: 1rem;
-  box-shadow: 0 0 3px #000000;
+  box-shadow: 0 -4px 30px rgba(0, 0, 0, 0.2);
 }
 
 .info-card > div > h1 {
