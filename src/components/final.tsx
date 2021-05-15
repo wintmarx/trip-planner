@@ -21,7 +21,7 @@ export default class Final extends React.Component<IProps, IState> {
 
   onSendClick() {
     console.log("email", this.state.email)
-    setTimeout(() => this.props.onExitCb(), 5000)
+    setTimeout(() => this.props.onExitCb(), 1000)
   }
 
   validateEmail(email: string) {
