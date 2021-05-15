@@ -27,8 +27,25 @@
 
 .final-input {
   font-family: var(--theme-font-family);
+  width: 40%;
 }
 
 .final-btn {
   float: right;
+}
+
+@media screen and (max-width: 650px) {
+  .bot-container {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .final-input {
+    width: 70%;
+  }
+
+  .final-btn {
+    margin: 4rem 0 0 0 !important;
+    float: none;
+  }
 }
