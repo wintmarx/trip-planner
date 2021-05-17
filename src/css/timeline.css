@@ -53,6 +53,7 @@
   font-size: 20px;
   line-height: 25px;
   font-weight: 600;
+  pointer-events: none;
 }
 
 .timeline-side > p {
@@ -102,6 +103,23 @@
   padding: 0 3rem 0 3rem !important;
   height: 70%;
   background: #000 !important;
+}
+
+@media screen and (max-width: 420px) {
+  .timeline {
+    min-height: 70px;
+  }
+  .timeline-side > p,
+  .time-bar-container > div > p {
+    font-size: 15px;
+    line-height: 15px;
+  }
+  .places-btn {
+    padding: 0 1.5rem 0 1.5rem !important;
+  }
+  .time-bar-container > div > p:last-child {
+    display: none;
+  }
 }
 
 @media screen and (max-width: 700px) {
