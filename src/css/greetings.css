@@ -63,7 +63,7 @@
     margin-top: 50%;
   }
   .greet-btn {
-    left: 50%;
+    left: calc(50% - 1.0875rem/2);
     transform: translateX(-50%);
   }
 }
