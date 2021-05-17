@@ -19,6 +19,7 @@ export default class Greetings extends React.Component<IProps> {
         <div className="greet-left-side">
           <h1 className="greet-header">
             {i18n["greeting_header_1st"]}
+            <img className="waving-icon" src="waving.png" />
             <br />
             {i18n["greeting_header_2nd"]}
           </h1>
@@ -26,6 +27,7 @@ export default class Greetings extends React.Component<IProps> {
 
           <ThemeButton className="greet-btn" onClick={this.props.onExitCb}>
             {i18n["create_trip_btn"]}
+            <img className="sparkles-icon" src="sparkles.png" />
           </ThemeButton>
         </div>
         <StaticImage

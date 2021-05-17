@@ -46,6 +46,12 @@
   max-width: 60%;
 }
 
+.sparkles-icon,
+.waving-icon {
+  margin: 0 0 0 0.5rem;
+  height: 1em;
+}
+
 @media screen and (max-width: 700px) {
   .greet-img {
     margin-top: 40%;
