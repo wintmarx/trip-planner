@@ -10,9 +10,11 @@ type ToggleButtonData = {
 }
 
 interface IProps {
-  onExitCb: (selTags: string[]) => void
+  onUpdate?: (selTags: string[]) => void
+  onExit?: () => void
   header: string
   tags: string[]
+  selTags: string[]
 }
 
 interface IState {
@@ -23,16 +25,16 @@ export default class TagsSelector extends React.Component<IProps, IState> {
   constructor(props: IProps) {
     super(props)
     this.state = {
-      btnData: this.mapTagsOnBtns(this.props.tags),
+      btnData: this.mapTagsOnBtns(this.props.tags, this.props.selTags),
     }
   }
 
-  mapTagsOnBtns(tags: string[]) {
+  mapTagsOnBtns(tags: string[], selTags: string[]) {
     return tags.map(
       tag =>
         ({
           name: tag,
-          checked: false,
+          checked: selTags.includes(tag),
           label: i18n[tag as keyof typeof i18n],
         } as ToggleButtonData)
     )
@@ -59,20 +61,17 @@ export default class TagsSelector extends React.Component<IProps, IState> {
     const btns = this.state.btnData
     btns[index].checked = !btns[index].checked
     this.setState({ btnData: btns })
-  }
-
-  onExit() {
-    this.props.onExitCb(
-      this.state.btnData.filter(cb => cb.checked).map(cb => cb.name)
-    )
+    if (this.props.onUpdate !== undefined) {
+      this.props.onUpdate(btns.filter(cb => cb.checked).map(cb => cb.name))
+    }
   }
 
   render() {
     return (
       <>
-        <h3 className="tag-header">{i18n["select_place_tags"]}</h3>
+        <h3 className="tag-header">{this.props.header}</h3>
         <div className="tag-container">{this.renderBtns.call(this)}</div>
-        <ThemeButton className="tag-btn" onClick={this.onExit.bind(this)}>
+        <ThemeButton className="tag-btn" onClick={this.props.onExit}>
           {i18n["next_page"]} →
         </ThemeButton>
       </>

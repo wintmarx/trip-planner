@@ -8,6 +8,7 @@ interface IProps {
   score: number
   placeData: PlaceData
   showInfo: boolean
+  checked?: boolean
   onInfoClick?: (e: any) => void
   onClick?: (checked: boolean, e: any) => void
 }
@@ -19,7 +20,13 @@ interface IState {
 export default class PlaceCard extends React.Component<IProps, IState> {
   constructor(props: IProps) {
     super(props)
-    this.state = { checked: false }
+    var isChecked = false
+    if (this.props.checked !== undefined) {
+      isChecked = this.props.checked
+    }
+    this.state = {
+      checked: isChecked,
+    }
   }
 
   onClick(e: any) {
@@ -47,10 +54,7 @@ export default class PlaceCard extends React.Component<IProps, IState> {
           onClick={this.props.onInfoClick}
         />
         <div className="card-img">
-          <img
-            src={`photo/${this.props.placeData.photo}.jpg`}
-            alt={this.props.label}
-          />
+          <img src={this.props.placeData.photo} alt={this.props.label} />
         </div>
         <div className="card-label">
           <p className="debug-score">{`Score: ${this.props.score}`}</p>

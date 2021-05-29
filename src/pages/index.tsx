@@ -69,9 +69,10 @@ const IndexPage: React.FC = () => (
       const places: PlaceData[] = activitiesCsv.map(
         (el: ActivityCsv) =>
           ({
+            id: el.photo,
             name: el.name,
             description: el.description,
-            photo: el.photo,
+            photo: `photo/${el.photo}.jpg`,
             ttv: Number(el.time_to_visit),
             gmReviewsCnt: Number(el.number_of_reviews_in_gm),
             gmRating: Number(el.average_gm_rating),

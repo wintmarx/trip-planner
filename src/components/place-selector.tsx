@@ -1,5 +1,4 @@
 import React from "react"
-import { ThemeButton } from "./theme-button"
 import { Tags } from "./app"
 import { PlaceData } from "./app"
 import i18n from "../i18n/ru.json"
@@ -15,9 +14,11 @@ type PlaceState = {
 }
 
 interface IProps {
-  onExitCb: () => void
+  onUpdate?: (selPlaces: string[]) => void
+  onExit?: () => void
   selTags: Tags
   places: PlaceData[]
+  selPlaces: string[]
 }
 
 interface IState {
@@ -52,7 +53,7 @@ export default class PlaceSelector extends React.Component<IProps, IState> {
     const cards: PlaceState[] = sorted.map(
       place =>
         ({
-          checked: false,
+          checked: this.props.selPlaces.includes(place.id),
           label: place.name,
           score: dict[place.name],
           placeData: place,
@@ -66,6 +67,11 @@ export default class PlaceSelector extends React.Component<IProps, IState> {
     const { cards } = this.state
     cards[index].checked = checked
     this.setState({ cards: cards })
+    if (this.props.onUpdate !== undefined) {
+      this.props.onUpdate(
+        cards.filter(card => card.checked).map(card => card.placeData.id)
+      )
+    }
   }
 
   onClickInfo(index: number, e: any) {
@@ -80,6 +86,7 @@ export default class PlaceSelector extends React.Component<IProps, IState> {
     return this.state.cards.map((checkbox, index) => (
       <React.Fragment key={index}>
         <PlaceCard
+          checked={checkbox.checked}
           label={checkbox.label}
           score={checkbox.score}
           placeData={checkbox.placeData}
@@ -121,7 +128,7 @@ export default class PlaceSelector extends React.Component<IProps, IState> {
           hidden={this.isTimelineHidden.call(this)}
           time={this.getConsumedTime.call(this)}
           dayTime={600}
-          onExitCb={this.props.onExitCb}
+          onExit={this.props.onExit}
         />
       </>
     )

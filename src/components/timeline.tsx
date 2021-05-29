@@ -7,7 +7,7 @@ interface IProps {
   time: number
   dayTime: number
   hidden?: boolean
-  onExitCb?: () => void
+  onExit?: () => void
 }
 
 export default class Timeline extends React.Component<IProps> {
@@ -96,7 +96,7 @@ export default class Timeline extends React.Component<IProps> {
               />
             </div>
           </div>
-          <ThemeButton className="places-btn" onClick={this.props.onExitCb}>
+          <ThemeButton className="places-btn" onClick={this.props.onExit}>
             {i18n["next_page"]}
           </ThemeButton>
         </div>

@@ -5,7 +5,7 @@ import i18n from "../i18n/ru.json"
 import "../css/final.css"
 
 interface IProps {
-  onExitCb: () => void
+  onExit: () => void
 }
 
 interface IState {
@@ -21,7 +21,7 @@ export default class Final extends React.Component<IProps, IState> {
 
   onSendClick() {
     console.log("email", this.state.email)
-    setTimeout(() => this.props.onExitCb(), 1000)
+    setTimeout(() => this.props.onExit(), 1000)
   }
 
   validateEmail(email: string) {

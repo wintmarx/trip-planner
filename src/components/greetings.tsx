@@ -5,7 +5,7 @@ import i18n from "../i18n/ru.json"
 import "../css/greetings.css"
 
 interface IProps {
-  onExitCb: () => void
+  onExit: () => void
 }
 
 export default class Greetings extends React.Component<IProps> {
@@ -25,7 +25,7 @@ export default class Greetings extends React.Component<IProps> {
           </h1>
           <p className="greet-desc">{i18n["greeting_desc"]}</p>
 
-          <ThemeButton className="greet-btn" onClick={this.props.onExitCb}>
+          <ThemeButton className="greet-btn" onClick={this.props.onExit}>
             {i18n["create_trip_btn"]}
             <img className="sparkles-icon" src="sparkles.png" />
           </ThemeButton>
