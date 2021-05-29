@@ -1,4 +1,5 @@
 import React from "react"
+import { useLocation } from "@reach/router"
 import { App, PlaceData } from "../components/app"
 import { StaticQuery, graphql } from "gatsby"
 
@@ -12,6 +13,18 @@ type ActivityCsv = {
   number_of_ta_reviews: any
   average_ta_rating: any
   [x: string]: string
+}
+
+function getQueryVariable(variable: string, location: any) {
+  var query = location.search.substring(1)
+  var vars = query.split("&")
+  for (var i = 0; i < vars.length; i++) {
+    var pair = vars[i].split("=")
+    if (pair[0] == variable) {
+      return pair[1]
+    }
+  }
+  return false
 }
 
 const IndexPage: React.FC = () => (
@@ -85,7 +98,10 @@ const IndexPage: React.FC = () => (
           } as PlaceData)
       )
 
-      return <App places={places} tags={tags} />
+      const location = useLocation()
+      const isDebug = typeof getQueryVariable("debug", location) == "string"
+
+      return <App debug={isDebug} places={places} tags={tags} />
     }}
   />
 )

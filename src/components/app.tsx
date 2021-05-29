@@ -37,6 +37,7 @@ export type PlaceData = {
 interface IProps {
   places: PlaceData[]
   tags: Tags
+  debug?: boolean
 }
 
 interface IState {
@@ -181,6 +182,7 @@ export class App extends React.Component<IProps, IState> {
         )}
         {this.state.page == Page.Places && (
           <PlaceSelector
+            debug={this.props.debug !== undefined && this.props.debug}
             selPlaces={this.state.selPlaces}
             selTags={this.state.selTags}
             places={this.props.places}

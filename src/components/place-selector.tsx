@@ -16,6 +16,7 @@ type PlaceState = {
 interface IProps {
   onUpdate?: (selPlaces: string[]) => void
   onExit?: () => void
+  debug?: boolean
   selTags: Tags
   places: PlaceData[]
   selPlaces: string[]
@@ -87,6 +88,7 @@ export default class PlaceSelector extends React.Component<IProps, IState> {
       <React.Fragment key={index}>
         <PlaceCard
           checked={checkbox.checked}
+          debug={this.props.debug}
           label={checkbox.label}
           score={checkbox.score}
           placeData={checkbox.placeData}

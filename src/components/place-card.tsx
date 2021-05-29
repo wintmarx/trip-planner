@@ -9,6 +9,7 @@ interface IProps {
   placeData: PlaceData
   showInfo: boolean
   checked?: boolean
+  debug?: boolean
   onInfoClick?: (e: any) => void
   onClick?: (checked: boolean, e: any) => void
 }
@@ -57,7 +58,9 @@ export default class PlaceCard extends React.Component<IProps, IState> {
           <img src={this.props.placeData.photo} alt={this.props.label} />
         </div>
         <div className="card-label">
-          <p className="debug-score">{`Score: ${this.props.score}`}</p>
+          {this.props.debug !== undefined && this.props.debug && (
+            <p className="debug-score">{`Score: ${this.props.score}`}</p>
+          )}
           <div className="time-label">
             <img src="time_icon.svg" />
             <p>{`${this.props.placeData.ttv} ${i18n["min"]}`}</p>
