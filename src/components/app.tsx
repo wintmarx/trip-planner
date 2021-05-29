@@ -5,6 +5,7 @@ import Greetings from "./greetings"
 import Layout from "./layout"
 import PlaceSelector from "./place-selector"
 import i18n from "../i18n/ru.json"
+import ym from "react-yandex-metrika"
 
 enum Page {
   Greetings,
@@ -108,6 +109,7 @@ export class App extends React.Component<IProps, IState> {
 
   onGreetingsNext() {
     this.setState({ page: Page.PlaceTags })
+    ym("reachGoal", "place-tags")
   }
 
   onPlaceTagsSelected(selTags: string[]) {
@@ -120,6 +122,7 @@ export class App extends React.Component<IProps, IState> {
     this.setState({
       page: Page.ThemeTags,
     })
+    ym("reachGoal", "theme-tags")
   }
 
   onThemeTagsSelected(selTags: string[]) {
