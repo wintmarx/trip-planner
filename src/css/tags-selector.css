@@ -29,10 +29,6 @@
   border: 2px solid black;
 }
 
-.checked-btn:hover {
-  background: #303030;
-}
-
 .toggle-btn-label {
   font-family: var(--theme-font-family);
   font-size: 16px;
