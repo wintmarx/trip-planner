@@ -34,6 +34,7 @@ export default class Greetings extends React.Component<IProps> {
           className="greet-img"
           src="../images/illustration.svg"
           alt=""
+          placeholder="none"
           loading="eager"
         />
       </div>
