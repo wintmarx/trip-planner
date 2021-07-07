@@ -8,33 +8,23 @@ interface IProps {
   score: number
   placeData: PlaceData
   showInfo: boolean
-  checked?: boolean
+  checked: boolean
   debug?: boolean
   onInfoClick?: (e: any) => void
   onClick?: (checked: boolean, e: any) => void
 }
 
-interface IState {
-  checked: boolean
-}
-
-export default class PlaceCard extends React.Component<IProps, IState> {
+export default class PlaceCard extends React.Component<IProps> {
   constructor(props: IProps) {
     super(props)
-    var isChecked = false
-    if (this.props.checked !== undefined) {
-      isChecked = this.props.checked
-    }
     this.state = {
-      checked: isChecked,
+      checked: props.checked,
     }
   }
 
   onClick(e: any) {
-    const checked = !this.state.checked
-    this.setState({ checked: checked })
     if (this.props.onClick !== undefined) {
-      this.props.onClick(checked, e)
+      this.props.onClick(!this.props.checked, e)
     }
   }
 
@@ -42,11 +32,11 @@ export default class PlaceCard extends React.Component<IProps, IState> {
     return (
       <div
         className={`place-card ${
-          this.state.checked ? "place-checked" : "card-grad"
+          this.props.checked ? "place-checked" : "card-grad"
         }`}
         onClick={this.onClick.bind(this)}
       >
-        {this.state.checked && (
+        {this.props.checked && (
           <img className="selected-icon" src="selected_icon.svg" />
         )}
         <img

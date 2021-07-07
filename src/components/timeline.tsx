@@ -1,5 +1,6 @@
 import React from "react"
-import { ThemeButton } from "./theme-button"
+import { ThemeButton, TimelineButton } from "./theme-button"
+import MediaQuery from "react-responsive"
 import i18n from "../i18n/ru.json"
 import "../css/timeline.css"
 
@@ -8,6 +9,7 @@ interface IProps {
   dayTime: number
   hidden?: boolean
   onExit?: () => void
+  onReset?: () => void
 }
 
 export default class Timeline extends React.Component<IProps> {
@@ -96,9 +98,13 @@ export default class Timeline extends React.Component<IProps> {
               />
             </div>
           </div>
-          <ThemeButton className="places-btn" onClick={this.props.onExit}>
-            {i18n["next_page"]}
-          </ThemeButton>
+          <TimelineButton className="reset-btn" onClick={this.props.onReset}>
+            <MediaQuery minWidth={800}>{i18n["reset_places"]}</MediaQuery>
+            <img className="reset-icon" src="reset_icon.svg" />
+          </TimelineButton>
+          <TimelineButton className="places-btn" onClick={this.props.onExit}>
+            {i18n["create_trip"]}
+          </TimelineButton>
         </div>
       </div>
     )

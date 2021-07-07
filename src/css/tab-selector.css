@@ -1,0 +1,39 @@
+@import "./style.css";
+
+.tab-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+}
+
+.tab {
+  margin: auto 1rem auto 1rem;
+  height: 30px;
+  font-family: "Gilroy";
+  font-size: 16px;
+  line-height: 20px;
+  cursor: pointer;
+}
+
+@media screen and (max-width: 500px) {
+    .tab-container {
+        justify-content: left;
+        border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+    }
+}
+
+/* .tab-container .tab::after {
+  left: 100%;
+  right: 0;
+}
+
+.tab-container div:hover ~ div::after {
+  left: 0;
+  right: 100%;
+}
+
+.tab-container div:hover::after {
+  left: 0;
+  right: 0;
+} */

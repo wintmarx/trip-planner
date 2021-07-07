@@ -9,7 +9,11 @@ const Layout: React.FC<{ headerCb: HeaderCb }> = ({ children, headerCb }) => {
   return (
     <div className="page">
       <YMInitializer
-        accounts={[79333369]}
+        accounts={
+          process.env.GATSBY_YM_ID === undefined
+            ? []
+            : [Number(process.env.GATSBY_YM_ID)]
+        }
         options={{ webvisor: true }}
         version="2"
       />

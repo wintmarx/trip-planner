@@ -13,20 +13,22 @@
   -moz-box-sizing: border-box;
   -webkit-box-sizing: border-box;
   border-radius: 100px;
+  cursor: pointer;
 }
 
 .reg-btn {
   background: transparent;
   border: 2px solid #d9d7d3;
+  transition: background-color .1s linear;
 }
 
 .reg-btn:hover {
-  border: 2px solid var(--text-color);
+  background-color: #d9d7d3;
 }
 
 .checked-btn {
-  background: black;
-  border: 2px solid black;
+  background: var(--text-color);
+  border: 2px solid var(--text-color);
 }
 
 .toggle-btn-label {
@@ -51,6 +53,23 @@
 }
 
 .tag-btn {
-  margin: 3rem 0 !important;
-  float: right;
+  margin: 5rem auto 5rem auto !important;
+  display: block !important;
+  min-width: 250px !important;
+}
+
+@media screen and (max-width: 500px) {
+    .tag-header {
+        text-align: left;
+        margin: 0;
+    }
+
+    .tag-container {
+        justify-content: left;
+    }
+
+    .tag-btn {
+        margin: 2rem auto 2rem auto !important;
+        min-width: 90% !important;
+    }
 }

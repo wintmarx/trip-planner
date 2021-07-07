@@ -1,5 +1,4 @@
 module.exports = {
-  pathPrefix: "/trip-planner",
   siteMetadata: {
     title: `Trip Planner`,
     description: `Guide for you trip.`,

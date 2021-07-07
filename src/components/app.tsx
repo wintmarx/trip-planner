@@ -6,6 +6,10 @@ import Layout from "./layout"
 import PlaceSelector from "./place-selector"
 import i18n from "../i18n/ru.json"
 import ym from "react-yandex-metrika"
+import { Api, TripRequestPlace } from "../api"
+import { ThemeTab, ThemeTabs } from "../styles/tabs-style"
+import TabSelector, { Tab } from "./tab-selector"
+import { title } from "node:process"
 
 enum Page {
   Greetings,
@@ -32,6 +36,9 @@ export type PlaceData = {
   gmRating: number
   taReviewsCnt: number
   taRating: number
+  googleLink: string
+  twogisLink: string
+  yandexLink: string
 }
 
 interface IProps {
@@ -54,6 +61,7 @@ export class App extends React.Component<IProps, IState> {
     selTags: { places: [], themes: [] },
     selPlaces: [],
   }
+  api = new Api()
   constructor(props: IProps) {
     super(props)
     this.onGreetingsNext = this.onGreetingsNext.bind(this)
@@ -63,8 +71,11 @@ export class App extends React.Component<IProps, IState> {
     this.onThemeTagsClosed = this.onThemeTagsClosed.bind(this)
     this.onPlacesSelected = this.onPlacesSelected.bind(this)
     this.onPlacesClosed = this.onPlacesClosed.bind(this)
+    this.onEnterValidEmail = this.onEnterValidEmail.bind(this)
     this.onFinalClosed = this.onFinalClosed.bind(this)
     this.clearState = this.clearState.bind(this)
+    this.isTabsVisible = this.isTabsVisible.bind(this)
+    this.renderTabs = this.renderTabs.bind(this)
     this.state = {
       page: Page.Loading,
       selTags: { places: [], themes: [] },
@@ -88,12 +99,17 @@ export class App extends React.Component<IProps, IState> {
       var restore = sessionStorage.getItem(STORAGE_NAME)
       const millisInHr = 1000 * 60 * 60
       const isExpired = !data.date || Date.now() - data.date > millisInHr * 5
+      if (isExpired) {
+        ym("reachGoal", "expired-state")
+      }
       if (isExpired || (!restore && !window.confirm(i18n["restore_session"]))) {
         throw new Error()
       }
       this.setState(data.state)
+      ym("reachGoal", "restore")
     } catch (error) {
       this.clearState()
+      ym("reachGoal", "no-restore")
     }
   }
 
@@ -110,7 +126,7 @@ export class App extends React.Component<IProps, IState> {
 
   onGreetingsNext() {
     this.setState({ page: Page.PlaceTags })
-    ym("reachGoal", "place-tags")
+    ym("reachGoal", "greetings")
   }
 
   onPlaceTagsSelected(selTags: string[]) {
@@ -120,10 +136,10 @@ export class App extends React.Component<IProps, IState> {
   }
 
   onPlaceTagsClosed() {
+    ym("reachGoal", "place-tags", { placeTags: this.state.selTags.places })
     this.setState({
       page: Page.ThemeTags,
     })
-    ym("reachGoal", "theme-tags")
   }
 
   onThemeTagsSelected(selTags: string[]) {
@@ -133,12 +149,14 @@ export class App extends React.Component<IProps, IState> {
   }
 
   onThemeTagsClosed() {
+    ym("reachGoal", "theme-tags", { themeTags: this.state.selTags.themes })
     this.setState({
       page: Page.Places,
     })
   }
 
   onPlacesSelected(selPlaces: string[]) {
+    ym("reachGoal", "places", { selPlaces: this.state.selPlaces })
     this.setState({
       selPlaces: selPlaces,
     })
@@ -148,8 +166,70 @@ export class App extends React.Component<IProps, IState> {
     this.setState({ page: Page.Final })
   }
 
-  onFinalClosed() {
+  onEnterValidEmail(email: string) {
+    ym("reachGoal", "valid-email")
+  }
+
+  onFinalClosed(email: string) {
+    ym("reachGoal", "route", {
+      email: email,
+      selTags: this.state.selTags,
+      places: this.state.selPlaces,
+    })
+    // const requestPlaces = this.props.places
+    //   .filter(place => this.state.selPlaces.includes(place.id))
+    //   .map(
+    //     place =>
+    //       ({
+    //         desc: place.description,
+    //         title: place.name,
+    //         ttv: place.ttv,
+    //         googleLink: place.googleLink,
+    //         twogisLink: place.twogisLink,
+    //         yandexLink: place.yandexLink,
+    //         photo: place.photo.split("/").pop(),
+    //       } as TripRequestPlace)
+    //   )
+
+    // this.api
+    //   .requestTrip({ email: email, places: requestPlaces })
+    //   .then(res => {
+    //     //   var url = window.URL.createObjectURL(res.data)
+    //     //   var a = document.createElement("a")
+    //     //   a.href = url
+    //     //   a.download = "trip.pdf"
+    //     //   a.click()
+    //     //   a.remove()
+    //     //   setTimeout(() => window.URL.revokeObjectURL(url), 100)
+    //     console.log("res ok", res.status)
+    //   })
+    //   .catch(err => {
+    //     console.log("res err", err.status)
+    //   })
     this.clearState()
+  }
+
+  isTabsVisible() {
+    return (
+      this.state.page == Page.PlaceTags ||
+      this.state.page == Page.ThemeTags ||
+      this.state.page == Page.Places
+    )
+  }
+
+  renderTabs() {
+    const tabs: Tab[] = [
+      { title: i18n["objects"], value: Page.PlaceTags },
+      { title: i18n["themes"], value: Page.ThemeTags },
+      { title: i18n["route"], value: Page.Places },
+    ]
+    return (
+      <TabSelector
+        tabs={tabs}
+        value={this.state.page}
+        onChange={(p: number) => this.setState({ page: p as Page })}
+      />
+    )
   }
 
   render() {
@@ -159,9 +239,11 @@ export class App extends React.Component<IProps, IState> {
           this.clearState()
         }}
       >
+        {this.isTabsVisible() && this.renderTabs()}
         {this.state.page == Page.Greetings && (
           <Greetings onExit={this.onGreetingsNext} />
         )}
+
         {this.state.page == Page.PlaceTags && (
           <TagsSelector
             tags={this.props.tags.places}
@@ -190,7 +272,12 @@ export class App extends React.Component<IProps, IState> {
             onExit={this.onPlacesClosed}
           />
         )}
-        {this.state.page == Page.Final && <Final onExit={this.onFinalClosed} />}
+        {this.state.page == Page.Final && (
+          <Final
+            onEnterValidEmail={this.onEnterValidEmail}
+            onExit={this.onFinalClosed}
+          />
+        )}
       </Layout>
     )
   }

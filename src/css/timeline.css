@@ -100,9 +100,21 @@
 }
 
 .places-btn {
-  padding: 0 3rem 0 3rem !important;
-  height: 70%;
-  background: #000 !important;
+  height: 60%;
+  background: var(--main-color) !important;
+  margin: 0 0 0 1rem !important;
+}
+
+.reset-btn {
+  height: 60%;
+  background: transparent !important;
+  color: var(--text-color) !important;
+  border: 2px solid var(--text-color) !important;
+}
+
+.reset-icon {
+  margin: 0 0 0 0.5rem;
+  height: 1em;
 }
 
 @media screen and (max-width: 420px) {
@@ -125,5 +137,14 @@
 @media screen and (max-width: 700px) {
   .time-bar-container > div > p:nth-child(2) {
     display: none;
+  }
+}
+
+@media screen and (max-width: 800px) {
+  .reset-btn {
+    border-radius: 50% !important;
+  }
+  .reset-icon {
+    margin: 0;
   }
 }

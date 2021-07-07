@@ -12,6 +12,9 @@ type ActivityCsv = {
   average_gm_rating: any
   number_of_ta_reviews: any
   average_ta_rating: any
+  twogis_nav: any
+  google_nav: any
+  yandex_nav: any
   [x: string]: string
 }
 
@@ -36,6 +39,9 @@ const IndexPage: React.FC = () => (
             name
             description
             who_add
+            twogis_nav
+            google_nav
+            yandex_nav
             photo
             coordinates
             time_to_visit
@@ -91,6 +97,9 @@ const IndexPage: React.FC = () => (
             gmRating: Number(el.average_gm_rating),
             taReviewsCnt: Number(el.number_of_ta_reviews),
             taRating: Number(el.average_ta_rating),
+            twogisLink: el.twogis_nav,
+            googleLink: el.google_nav,
+            yandexLink: el.yandex_nav,
             tags: {
               places: tags.places.filter(placeTag => el[placeTag] == "+"),
               themes: tags.themes.filter(themeTag => el[themeTag] == "+"),

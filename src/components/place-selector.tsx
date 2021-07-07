@@ -5,6 +5,7 @@ import i18n from "../i18n/ru.json"
 import "../css/place-selector.css"
 import PlaceCard from "./place-card"
 import Timeline from "./timeline"
+import ym from "react-yandex-metrika"
 
 type PlaceState = {
   checked: boolean
@@ -75,28 +76,38 @@ export default class PlaceSelector extends React.Component<IProps, IState> {
     }
   }
 
+  onReset() {
+    const { cards } = this.state
+    cards.forEach(el => (el.checked = false))
+    this.setState({ cards: cards })
+    if (this.props.onUpdate !== undefined) {
+      this.props.onUpdate([])
+    }
+  }
+
   onClickInfo(index: number, e: any) {
     e.stopPropagation()
     if (index == this.state.infoIndex) {
       index = -1
+    } else {
+      ym("reachGoal", "place-info")
     }
     this.setState({ infoIndex: index })
   }
 
   renderCards() {
-    return this.state.cards.map((checkbox, index) => (
-      <React.Fragment key={index}>
-        <PlaceCard
-          checked={checkbox.checked}
-          debug={this.props.debug}
-          label={checkbox.label}
-          score={checkbox.score}
-          placeData={checkbox.placeData}
-          showInfo={index == this.state.infoIndex}
-          onInfoClick={this.onClickInfo.bind(this, index)}
-          onClick={this.onCardClick.bind(this, index)}
-        />
-      </React.Fragment>
+    return this.state.cards.map((card, index) => (
+      <PlaceCard
+        key={index}
+        checked={card.checked}
+        debug={this.props.debug}
+        label={card.label}
+        score={card.score}
+        placeData={card.placeData}
+        showInfo={index == this.state.infoIndex}
+        onInfoClick={this.onClickInfo.bind(this, index)}
+        onClick={this.onCardClick.bind(this, index)}
+      />
     ))
   }
 
@@ -131,6 +142,7 @@ export default class PlaceSelector extends React.Component<IProps, IState> {
           time={this.getConsumedTime.call(this)}
           dayTime={600}
           onExit={this.props.onExit}
+          onReset={this.onReset.bind(this)}
         />
       </>
     )

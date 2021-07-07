@@ -37,7 +37,7 @@ export default class TagsSelector extends React.Component<IProps, IState> {
           checked: selTags.includes(tag),
           label: i18n[tag as keyof typeof i18n],
         } as ToggleButtonData)
-    )
+    ).sort((a, b) => (a.label.length - b.label.length))
   }
 
   renderBtns() {

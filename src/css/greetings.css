@@ -60,10 +60,21 @@
 
 @media screen and (max-width: 500px) {
   .greet-img {
-    margin-top: 50%;
+    margin-top: 50vh;
+    max-width: 85%;
   }
+
   .greet-btn {
-    left: calc(50% - 1.0875rem/2);
+    left: calc(50% - 1.0875rem / 2);
     transform: translateX(-50%);
+    margin-top: 50% !important;
+  }
+
+  .greet-left-side {
+    margin-top: 0;
+  }
+
+  .greet-desc {
+    max-width: 95%;
   }
 }
