@@ -22,12 +22,16 @@
   max-width: var(--max-content-width);
   height: 100%;
   display: flex;
-  justify-content: space-between;
+  justify-content: right;
   align-items: center;
 }
 
-.time-bar-container {
+.full-time-bar {
   width: 100%;
+  flex: 5;
+}
+
+.time-bar-container {
   flex: 5;
 }
 
@@ -100,51 +104,104 @@
 }
 
 .places-btn {
-  height: 60%;
-  background: var(--main-color) !important;
-  margin: 0 0 0 1rem !important;
+  padding-top: 0.7rem;
+  padding-bottom: 0.7rem;
+  background-color: var(--main-color);
+  margin: 0 0 0 1rem;
+  transition: background-color 0.1s linear;
+}
+
+.places-btn:hover {
+  background-color: #65d8c3;
 }
 
 .reset-btn {
-  height: 60%;
-  background: transparent !important;
-  color: var(--text-color) !important;
-  border: 2px solid var(--text-color) !important;
+  padding-top: 0.7rem;
+  padding-bottom: 0.7rem;
+  background: transparent;
+  color: var(--text-color);
+  border: 2px solid var(--text-color);
+  transition: background-color 0.1s linear;
+}
+
+.reset-btn:hover {
+  background-color: #d9d7d3;
 }
 
 .reset-icon {
   margin: 0 0 0 0.5rem;
   height: 1em;
+  width: 1em;
 }
 
-@media screen and (max-width: 420px) {
-  .timeline {
-    min-height: 70px;
-  }
-  .timeline-side > p,
-  .time-bar-container > div > p {
-    font-size: 15px;
-    line-height: 15px;
-  }
-  .places-btn {
-    padding: 0 1.5rem 0 1.5rem !important;
-  }
-  .time-bar-container > div > p:last-child {
-    display: none;
-  }
+.full-time-bar {
+  display: flex;
 }
 
-@media screen and (max-width: 700px) {
+@media screen and (max-width: 950px) {
   .time-bar-container > div > p:nth-child(2) {
     display: none;
   }
 }
 
 @media screen and (max-width: 800px) {
-  .reset-btn {
-    border-radius: 50% !important;
+  .time-bar-container > div > p:nth-child(2) {
+    display: initial;
   }
+  .timeline-container {
+    flex-wrap: wrap;
+  }
+  .full-time-bar {
+    flex-basis: 100%;
+    /* margin-bottom: 10px; */
+  }
+  .bar-header {
+    width: 100%;
+  }
+  .time-bar {
+    width: 100%;
+  }
+  .timeline {
+    min-height: 130px;
+    min-width: 250px;
+  }
+  .reset-btn {
+    justify-self: right;
+  }
+}
+
+@media screen and (max-width: 550px) {
+  .time-bar-container > div > p:nth-child(2) {
+    display: none;
+  }
+
+  .reset-btn {
+    padding: 0.7rem;
+    background-color: white;
+    border: 2px solid white;
+    box-shadow: 0px 1px 2px rgba(0, 0, 0, 0.2);
+    transform: border-color 0.1s linear;
+  }
+
+  .reset-btn:hover {
+    border: 2px solid #d9d7d3;
+  }
+
   .reset-icon {
     margin: 0;
+    width: 1.2em;
+    height: 1.2em;
+  }
+}
+
+@media screen and (max-width: 420px) {
+  .places-btn {
+    padding-top: 1rem;
+    padding-bottom: 1rem;
+  }
+
+  .places-btn > span {
+    font-size: 16px;
+    line-height: 20px;
   }
 }

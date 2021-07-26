@@ -17,10 +17,13 @@
 }
 
 @media screen and (max-width: 500px) {
-    .tab-container {
-        justify-content: left;
-        border-bottom: 1px solid rgba(0, 0, 0, 0.1);
-    }
+  .tab-container {
+    position: relative;
+    width: 100vw;
+    left: -1.0875rem;
+    justify-content: left;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+  }
 }
 
 /* .tab-container .tab::after {

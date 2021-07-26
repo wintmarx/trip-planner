@@ -1,13 +1,14 @@
 @import "./style.css";
 
 .greet-container {
-  margin: 0;
   z-index: 1;
+  height: 100%;
+  /* overflow: hidden; */
 }
 
 .greet-left-side {
   position: absolute;
-  margin-top: 13%;
+  /* margin-top: 13%; */
   z-index: 1;
 }
 
@@ -33,48 +34,93 @@
 }
 
 .greet-btn {
-  margin: 4rem 0 !important;
+  margin: 4rem 0;
+  transition: background-color 0.1s linear;
+}
+
+.greet-btn:hover {
+  background-color: #65d8c3;
 }
 
 .greet-img {
   margin: 0 auto;
   position: relative;
-  margin-top: 20%;
+  top: 50px;
   left: 100%;
   transform: translateX(-100%);
   z-index: 0;
   max-width: 60%;
 }
 
-.sparkles-icon,
+.sparkles-icon {
+  margin: 0 0 0 0.5rem;
+  height: 1em;
+}
+
 .waving-icon {
   margin: 0 0 0 0.5rem;
   height: 1em;
 }
 
+@media screen and (min-width: 500px) {
+  .greet-container {
+    top: 35vh;
+    position: relative;
+    transform: translateY(-50%);
+  }
+}
+
 @media screen and (max-width: 700px) {
   .greet-img {
-    margin-top: 40%;
+    top: 125px;
+    min-width: 70%;
   }
 }
 
 @media screen and (max-width: 500px) {
   .greet-img {
-    margin-top: 50vh;
-    max-width: 85%;
+    position: relative;
+    margin-top: 0;
+    top: 20px;
+    left: 0;
+    transform: translateX(-10%);
+    min-width: 120%;
   }
 
   .greet-btn {
-    left: calc(50% - 1.0875rem / 2);
+    position: absolute;
+    left: 50vw;
     transform: translateX(-50%);
-    margin-top: 50% !important;
+    margin: 0 auto;
+    width: 90vw;
+    bottom: 10vh;
   }
 
   .greet-left-side {
+    position: relative;
     margin-top: 0;
   }
 
   .greet-desc {
+    font-size: 18px;
+    line-height: 26px;
     max-width: 95%;
+  }
+
+  .greet-header {
+    font-size: 30px;
+    line-height: 42px;
+    padding-top: 0;
+    padding-bottom: 0;
+  }
+
+  .greet-btn > span {
+    font-size: 20px;
+  }
+}
+
+@media screen and (max-width: 420px) {
+  .greet-btn > span {
+    font-size: 18px;
   }
 }

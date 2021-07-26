@@ -57,19 +57,24 @@ export default class PlaceCard extends React.Component<IProps> {
           </div>
           <p className="name-label">{this.props.label}</p>
         </div>
-        {this.props.showInfo && (
-          <div className="info-card" onClick={e => e.stopPropagation()}>
-            <div>
-              <h1>{i18n["info_header"]}</h1>
-              <img
-                className="close-icon"
-                src="close_icon.svg"
-                onClick={this.props.onInfoClick}
-              />
-            </div>
-            <p>{this.props.placeData.description}</p>
+        <div
+          className="info-card"
+          style={{
+            opacity: this.props.showInfo ? 1 : 0,
+            visibility: this.props.showInfo ? "visible" : "hidden",
+          }}
+          onClick={e => e.stopPropagation()}
+        >
+          <div>
+            <h1>{i18n["info_header"]}</h1>
+            <img
+              className="close-icon"
+              src="close_icon.svg"
+              onClick={this.props.onInfoClick}
+            />
           </div>
-        )}
+          <p>{this.props.placeData.description}</p>
+        </div>
       </div>
     )
   }

@@ -1,5 +1,4 @@
 import React from "react"
-import { ThemeButton, TimelineButton } from "./theme-button"
 import MediaQuery from "react-responsive"
 import i18n from "../i18n/ru.json"
 import "../css/timeline.css"
@@ -78,33 +77,37 @@ export default class Timeline extends React.Component<IProps> {
         className="timeline"
       >
         <div className="timeline-container">
-          {this.isTimeOverflow.call(this) && (
-            <div className="timeline-side">
-              <p>{this.getTimeOverflowString.call(this)}</p>
-              <div className="timeline-side-bar" />
-            </div>
-          )}
-          <div className="time-bar-container">
-            <div className="bar-header">
-              <p>{this.getTimeString.call(this)}</p>
-              <p>{i18n["trip_length"]}</p>
-              <p>{i18n["all_day"]}</p>
-            </div>
-            <div className="time-bar">
-              <div className="time-bar-outer" />
-              <div
-                style={{ width: `${this.getFillWidth.call(this)}%` }}
-                className="time-bar-fill"
-              />
+          <div className="full-time-bar">
+            {this.isTimeOverflow.call(this) && (
+              <div className="timeline-side">
+                <p>{this.getTimeOverflowString.call(this)}</p>
+                <div className="timeline-side-bar" />
+              </div>
+            )}
+            <div className="time-bar-container">
+              <div className="bar-header">
+                <p>{this.getTimeString.call(this)}</p>
+                <p>{i18n["trip_length"]}</p>
+                <p>{i18n["all_day"]}</p>
+              </div>
+              <div className="time-bar">
+                <div className="time-bar-outer" />
+                <div
+                  style={{ width: `${this.getFillWidth.call(this)}%` }}
+                  className="time-bar-fill"
+                />
+              </div>
             </div>
           </div>
-          <TimelineButton className="reset-btn" onClick={this.props.onReset}>
-            <MediaQuery minWidth={800}>{i18n["reset_places"]}</MediaQuery>
-            <img className="reset-icon" src="reset_icon.svg" />
-          </TimelineButton>
-          <TimelineButton className="places-btn" onClick={this.props.onExit}>
-            {i18n["create_trip"]}
-          </TimelineButton>
+          <button className="reset-btn" onClick={this.props.onReset}>
+            <span>
+              <MediaQuery minWidth={551}>{i18n["reset_places"]}</MediaQuery>
+              <img className="reset-icon" src="reset_icon.svg" />
+            </span>
+          </button>
+          <button className="places-btn" onClick={this.props.onExit}>
+            <span>{i18n["create_trip"]}</span>
+          </button>
         </div>
       </div>
     )

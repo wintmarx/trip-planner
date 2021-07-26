@@ -22,14 +22,19 @@
 
 .info-card {
   position: absolute;
-  left: 95%;
-  top: 15%;
+  left: 98%;
+  top: 3%;
+  max-height: 80%;
+  width: 100%;
   background-color: var(--bg-color);
   border-radius: 10px;
   transform: translateX(-100%);
   z-index: 4;
   padding: 1rem;
   box-shadow: 0 -4px 30px rgba(0, 0, 0, 0.2);
+  overflow-y: auto;
+  overflow-x: hidden;
+  transition: opacity 0.1s ease-in-out;
 }
 
 .info-card > div > h1 {
@@ -53,7 +58,7 @@
 }
 
 .info-card > p {
-  margin: 1rem 0 0 0;
+  margin: 1rem 0 0.2rem 0;
   font-family: var(--theme-font-family);
   font-size: 15px;
   line-height: 125%;
@@ -61,6 +66,7 @@
   opacity: 0.6;
   min-width: 250px;
   pointer-events: none;
+  word-wrap: normal;
 }
 
 .place-card {
@@ -78,6 +84,7 @@
   transform: translateY(-100%);
   max-width: 50%;
   z-index: 2;
+  word-wrap: normal;
 }
 
 .time-label {
@@ -159,4 +166,13 @@
 .place-checked:after {
   background: linear-gradient(0deg, #000000 0%, transparent 40%), #5cc6b3;
   opacity: 0.4;
+}
+
+@media screen and (max-width: 500px) {
+  .card-label {
+    max-width: 80%;
+  }
+  .time-label {
+    max-width: 60%;
+  }
 }

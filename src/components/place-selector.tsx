@@ -65,6 +65,10 @@ export default class PlaceSelector extends React.Component<IProps, IState> {
     this.state = { cards: cards, infoIndex: -1 }
   }
 
+  componentDidMount() {
+    document?.querySelector("body")?.scrollTo(0, 0)
+  }
+
   onCardClick(index: number, checked: boolean, e: any) {
     const { cards } = this.state
     cards[index].checked = checked
@@ -130,7 +134,7 @@ export default class PlaceSelector extends React.Component<IProps, IState> {
         <div
           style={{
             marginBottom: `${
-              this.isTimelineHidden.call(this) ? "inherit" : "max(10vh, 100px)"
+              this.isTimelineHidden.call(this) ? "inherit" : "max(11vh, 140px)"
             }`,
           }}
           className="cards-container"

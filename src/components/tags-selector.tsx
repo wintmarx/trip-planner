@@ -1,6 +1,5 @@
 import React from "react"
 import i18n from "../i18n/ru.json"
-import { ThemeButton } from "./theme-button"
 import "../css/tags-selector.css"
 
 type ToggleButtonData = {
@@ -29,15 +28,21 @@ export default class TagsSelector extends React.Component<IProps, IState> {
     }
   }
 
+  componentDidMount() {
+    document?.querySelector("body")?.scrollTo(0, 0)
+  }
+
   mapTagsOnBtns(tags: string[], selTags: string[]) {
-    return tags.map(
-      tag =>
-        ({
-          name: tag,
-          checked: selTags.includes(tag),
-          label: i18n[tag as keyof typeof i18n],
-        } as ToggleButtonData)
-    ).sort((a, b) => (a.label.length - b.label.length))
+    return tags
+      .map(
+        tag =>
+          ({
+            name: tag,
+            checked: selTags.includes(tag),
+            label: i18n[tag as keyof typeof i18n],
+          } as ToggleButtonData)
+      )
+      .sort((a, b) => a.label.length - b.label.length)
   }
 
   renderBtns() {
@@ -68,13 +73,15 @@ export default class TagsSelector extends React.Component<IProps, IState> {
 
   render() {
     return (
-      <>
+      // <div className="outter-container">
+      <div className="page-container">
         <h3 className="tag-header">{this.props.header}</h3>
         <div className="tag-container">{this.renderBtns.call(this)}</div>
-        <ThemeButton className="tag-btn" onClick={this.props.onExit}>
-          {i18n["next_page"]} →
-        </ThemeButton>
-      </>
+        <button className="tag-btn" onClick={this.props.onExit}>
+          <span>{i18n["next_page"]} →</span>
+        </button>
+      </div>
+      //   </div>
     )
   }
 }

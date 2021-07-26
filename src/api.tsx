@@ -20,7 +20,7 @@ export class Api {
   constructor() {
     this.client = axios.create({
       baseURL: process.env.GATSBY_API_ENDPOINT,
-      timeout: 1000,
+      timeout: 15000,
       headers: {
         "Content-Type": "application/json",
       },
@@ -28,8 +28,6 @@ export class Api {
   }
 
   requestTrip(data: TripRequestData) {
-    return this.client.post("/trip", data, {
-      responseType: "blob",
-    })
+    return this.client.post("/trip", data)
   }
 }

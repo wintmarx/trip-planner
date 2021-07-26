@@ -7,9 +7,8 @@ import PlaceSelector from "./place-selector"
 import i18n from "../i18n/ru.json"
 import ym from "react-yandex-metrika"
 import { Api, TripRequestPlace } from "../api"
-import { ThemeTab, ThemeTabs } from "../styles/tabs-style"
 import TabSelector, { Tab } from "./tab-selector"
-import { title } from "node:process"
+import CircleLoader from "react-spinners/CircleLoader"
 
 enum Page {
   Greetings,
@@ -51,6 +50,8 @@ interface IState {
   page: Page
   selTags: Tags
   selPlaces: string[]
+  showLoading: boolean
+  apiError: boolean
 }
 
 const STORAGE_NAME = "trip-planner"
@@ -60,6 +61,8 @@ export class App extends React.Component<IProps, IState> {
     page: Page.Greetings,
     selTags: { places: [], themes: [] },
     selPlaces: [],
+    showLoading: false,
+    apiError: false,
   }
   api = new Api()
   constructor(props: IProps) {
@@ -76,10 +79,13 @@ export class App extends React.Component<IProps, IState> {
     this.clearState = this.clearState.bind(this)
     this.isTabsVisible = this.isTabsVisible.bind(this)
     this.renderTabs = this.renderTabs.bind(this)
+    this.renderLoading = this.renderLoading.bind(this)
     this.state = {
       page: Page.Loading,
-      selTags: { places: [], themes: [] },
-      selPlaces: [],
+      selTags: this.defaultState.selTags,
+      selPlaces: this.defaultState.selPlaces,
+      showLoading: this.defaultState.showLoading,
+      apiError: this.defaultState.apiError,
     }
   }
 
@@ -105,6 +111,7 @@ export class App extends React.Component<IProps, IState> {
       if (isExpired || (!restore && !window.confirm(i18n["restore_session"]))) {
         throw new Error()
       }
+      data.state.apiError = this.defaultState.apiError
       this.setState(data.state)
       ym("reachGoal", "restore")
     } catch (error) {
@@ -176,37 +183,33 @@ export class App extends React.Component<IProps, IState> {
       selTags: this.state.selTags,
       places: this.state.selPlaces,
     })
-    // const requestPlaces = this.props.places
-    //   .filter(place => this.state.selPlaces.includes(place.id))
-    //   .map(
-    //     place =>
-    //       ({
-    //         desc: place.description,
-    //         title: place.name,
-    //         ttv: place.ttv,
-    //         googleLink: place.googleLink,
-    //         twogisLink: place.twogisLink,
-    //         yandexLink: place.yandexLink,
-    //         photo: place.photo.split("/").pop(),
-    //       } as TripRequestPlace)
-    //   )
+    this.setState({ showLoading: true })
+    const requestPlaces = this.props.places
+      .filter(place => this.state.selPlaces.includes(place.id))
+      .map(
+        place =>
+          ({
+            desc: place.description,
+            title: place.name,
+            ttv: place.ttv,
+            googleLink: place.googleLink,
+            twogisLink: place.twogisLink,
+            yandexLink: place.yandexLink,
+            photo: place.photo.split("/").pop(),
+          } as TripRequestPlace)
+      )
 
-    // this.api
-    //   .requestTrip({ email: email, places: requestPlaces })
-    //   .then(res => {
-    //     //   var url = window.URL.createObjectURL(res.data)
-    //     //   var a = document.createElement("a")
-    //     //   a.href = url
-    //     //   a.download = "trip.pdf"
-    //     //   a.click()
-    //     //   a.remove()
-    //     //   setTimeout(() => window.URL.revokeObjectURL(url), 100)
-    //     console.log("res ok", res.status)
-    //   })
-    //   .catch(err => {
-    //     console.log("res err", err.status)
-    //   })
-    this.clearState()
+    this.api
+      .requestTrip({ email: email, places: requestPlaces })
+      .then(res => {
+        this.clearState()
+      })
+      .catch(err => {
+        this.setState({ apiError: true })
+      })
+      .finally(() => {
+        this.setState({ showLoading: false })
+      })
   }
 
   isTabsVisible() {
@@ -232,6 +235,30 @@ export class App extends React.Component<IProps, IState> {
     )
   }
 
+  renderLoading() {
+    return (
+      <>
+        {this.state.showLoading && (
+          <div className="loading">
+            <div className="loading-bg" />
+            <CircleLoader
+              color={"#5cc6b3"}
+              css={`
+                display: "block";
+                position: absolute;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+              `}
+              loading={true}
+              size={80}
+            />
+          </div>
+        )}
+      </>
+    )
+  }
+
   render() {
     return (
       <Layout
@@ -239,11 +266,11 @@ export class App extends React.Component<IProps, IState> {
           this.clearState()
         }}
       >
-        {this.isTabsVisible() && this.renderTabs()}
         {this.state.page == Page.Greetings && (
           <Greetings onExit={this.onGreetingsNext} />
         )}
 
+        {this.isTabsVisible() && this.renderTabs()}
         {this.state.page == Page.PlaceTags && (
           <TagsSelector
             tags={this.props.tags.places}
@@ -272,12 +299,16 @@ export class App extends React.Component<IProps, IState> {
             onExit={this.onPlacesClosed}
           />
         )}
+
         {this.state.page == Page.Final && (
           <Final
             onEnterValidEmail={this.onEnterValidEmail}
             onExit={this.onFinalClosed}
+            error={this.state.apiError}
           />
         )}
+
+        {this.renderLoading()}
       </Layout>
     )
   }

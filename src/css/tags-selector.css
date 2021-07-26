@@ -1,5 +1,11 @@
 @import "./style.css";
 
+.outter-container {
+  display: flex;
+  flex-flow: row wrap;
+  height: 100%;
+}
+
 .tag-container {
   display: flex;
   justify-content: center;
@@ -17,9 +23,10 @@
 }
 
 .reg-btn {
+  padding: 0;
   background: transparent;
   border: 2px solid #d9d7d3;
-  transition: background-color .1s linear;
+  transition: background-color 0.1s linear;
 }
 
 .reg-btn:hover {
@@ -27,6 +34,7 @@
 }
 
 .checked-btn {
+  padding: 0;
   background: var(--text-color);
   border: 2px solid var(--text-color);
 }
@@ -47,29 +55,39 @@
 
 .tag-header {
   text-align: center;
-  margin: 2rem;
+  margin: 1rem;
   padding: 0.5rem 0;
   font-family: var(--theme-font-family);
 }
 
 .tag-btn {
-  margin: 5rem auto 5rem auto !important;
-  display: block !important;
-  min-width: 250px !important;
+  margin: 1rem 0 1rem 0;
+  padding-left: 3rem;
+  padding-right: 3rem;
+  float: right;
+  transition: background-color 0.1s linear;
+}
+
+.tag-btn:hover {
+  background-color: #65d8c3;
+}
+
+@media screen and (max-width: 420px) {
+  .tag-btn {
+    float: none;
+    width: 100%;
+  }
 }
 
 @media screen and (max-width: 500px) {
-    .tag-header {
-        text-align: left;
-        margin: 0;
-    }
+  .tag-header {
+    text-align: left;
+    margin: 0;
+    font-size: 24px;
+    line-height: 30px;
+  }
 
-    .tag-container {
-        justify-content: left;
-    }
-
-    .tag-btn {
-        margin: 2rem auto 2rem auto !important;
-        min-width: 90% !important;
-    }
+  .tag-container {
+    justify-content: left;
+  }
 }

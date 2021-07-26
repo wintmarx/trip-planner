@@ -1,4 +1,4 @@
-import React from "react"
+import React, { useEffect } from "react"
 import { useLocation } from "@reach/router"
 import { App, PlaceData } from "../components/app"
 import { StaticQuery, graphql } from "gatsby"
@@ -109,6 +109,10 @@ const IndexPage: React.FC = () => (
 
       const location = useLocation()
       const isDebug = typeof getQueryVariable("debug", location) == "string"
+
+      useEffect(()=>{
+          document.title = "Trip Planner"
+      }, [])
 
       return <App debug={isDebug} places={places} tags={tags} />
     }}

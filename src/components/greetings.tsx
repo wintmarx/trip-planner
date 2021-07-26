@@ -1,8 +1,8 @@
 import React from "react"
-import { ThemeButton } from "./theme-button"
 import { StaticImage } from "gatsby-plugin-image"
 import i18n from "../i18n/ru.json"
 import "../css/greetings.css"
+import MediaQuery from "react-responsive"
 
 interface IProps {
   onExit: () => void
@@ -24,11 +24,14 @@ export default class Greetings extends React.Component<IProps> {
             {i18n["greeting_header_2nd"]}
           </h1>
           <p className="greet-desc">{i18n["greeting_desc"]}</p>
-
-          <ThemeButton className="greet-btn" onClick={this.props.onExit}>
-            {i18n["create_trip_btn"]}
-            <img className="sparkles-icon" src="sparkles.png" />
-          </ThemeButton>
+          <MediaQuery minWidth={501}>
+            <button className="greet-btn" onClick={this.props.onExit}>
+              <span>
+                {i18n["create_trip_btn"]}
+                <img className="sparkles-icon" src="sparkles.png" />
+              </span>
+            </button>
+          </MediaQuery>
         </div>
         <StaticImage
           className="greet-img"
@@ -37,6 +40,15 @@ export default class Greetings extends React.Component<IProps> {
           placeholder="none"
           loading="eager"
         />
+
+        <MediaQuery maxWidth={500}>
+          <button className="greet-btn" onClick={this.props.onExit}>
+            <span>
+              {i18n["create_trip_btn"]}
+              <img className="sparkles-icon" src="sparkles.png" />
+            </span>
+          </button>
+        </MediaQuery>
       </div>
     )
   }
