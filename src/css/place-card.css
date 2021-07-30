@@ -18,6 +18,7 @@
   height: 8%;
   z-index: 2;
   cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
 }
 
 .info-card {
@@ -55,6 +56,7 @@
   margin: 0;
   position: relative;
   float: right;
+  -webkit-tap-highlight-color: transparent;
 }
 
 .info-card > p {
