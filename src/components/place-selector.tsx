@@ -144,7 +144,9 @@ export default class PlaceSelector extends React.Component<IProps, IState> {
         <Timeline
           hidden={this.isTimelineHidden.call(this)}
           time={this.getConsumedTime.call(this)}
-          dayTime={600}
+          minDayTime={60}
+          maxDayTime={720}
+          defaultDayTime={480}
           onExit={this.props.onExit}
           onReset={this.onReset.bind(this)}
         />

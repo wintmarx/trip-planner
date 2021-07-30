@@ -5,25 +5,71 @@ import "../css/timeline.css"
 
 interface IProps {
   time: number
-  dayTime: number
+  defaultDayTime: number
+  maxDayTime: number
+  minDayTime: number
   hidden?: boolean
   onExit?: () => void
   onReset?: () => void
+  onDayLengthChanged?: (value: number) => void
 }
 
-export default class Timeline extends React.Component<IProps> {
+interface IState {
+  isDayLengthBtn: boolean
+  dayTime: number
+}
+
+export default class Timeline extends React.Component<IProps, IState> {
+  inputRef: any
+  dayBtnRef: any
   constructor(props: IProps) {
     super(props)
+
+    this.getTimeOverflow = this.getTimeOverflow.bind(this)
+    this.getHrs = this.getHrs.bind(this)
+    this.getMins = this.getMins.bind(this)
+    this.getDays = this.getDays.bind(this)
+    this.getFillWidth = this.getFillWidth.bind(this)
+    this.getTimeString = this.getTimeString.bind(this)
+    this.getTimeOverflowString = this.getTimeOverflowString.bind(this)
+    this.isTimeOverflow = this.isTimeOverflow.bind(this)
+    this.isHidden = this.isHidden.bind(this)
+    this.onDayLengthBtn = this.onDayLengthBtn.bind(this)
+    this.onInputChange = this.onInputChange.bind(this)
+    this.renderDayLengthBtn = this.renderDayLengthBtn.bind(this)
+    this.handleClickEvent = this.handleClickEvent.bind(this)
+    this.inputRef = React.createRef()
+    this.dayBtnRef = React.createRef()
+
+    this.state = { isDayLengthBtn: false, dayTime: this.props.defaultDayTime }
+  }
+
+  handleClickEvent(event: any) {
+    if (
+      !this.inputRef.current?.contains(event.target) &&
+      !this.dayBtnRef.current?.contains(event.target) &&
+      this.state.isDayLengthBtn
+    ) {
+      this.setState({ isDayLengthBtn: false })
+    }
+  }
+
+  componentDidMount() {
+    document.addEventListener("click", this.handleClickEvent, false)
+  }
+
+  componentWillUnmount() {
+    document.removeEventListener("click", this.handleClickEvent, false)
   }
 
   getTimeOverflow() {
-    return this.props.time % this.props.dayTime
+    return this.props.time % this.state.dayTime
   }
 
   getHrs() {
     const h = Math.floor(this.getTimeOverflow() / 60)
     if (this.getTimeOverflow() == 0 && this.props.time > 0) {
-      return Math.floor(this.props.dayTime / 60)
+      return Math.floor(this.state.dayTime / 60)
     }
     return h
   }
@@ -33,7 +79,7 @@ export default class Timeline extends React.Component<IProps> {
   }
 
   getDays() {
-    const d = Math.floor(this.props.time / this.props.dayTime)
+    const d = Math.floor(this.props.time / this.state.dayTime)
     if (this.getTimeOverflow() == 0) {
       return d - 1
     }
@@ -42,7 +88,7 @@ export default class Timeline extends React.Component<IProps> {
 
   getFillWidth() {
     const time = this.getMins() + this.getHrs() * 60
-    return Math.min(Math.round((time / this.props.dayTime) * 100), 100)
+    return Math.min(Math.round((time / this.state.dayTime) * 100), 100)
   }
 
   getTimeString() {
@@ -58,7 +104,7 @@ export default class Timeline extends React.Component<IProps> {
   }
 
   isTimeOverflow() {
-    return this.props.time > this.props.dayTime
+    return this.props.time > this.state.dayTime
   }
 
   isHidden() {
@@ -66,6 +112,68 @@ export default class Timeline extends React.Component<IProps> {
       return this.props.hidden
     }
     return this.props.time == 0
+  }
+
+  onInputChange(e: any) {
+    const el = e.target
+    this.setState({ dayTime: el.value })
+    if (this.props.onDayLengthChanged !== undefined) {
+      this.props.onDayLengthChanged(el.value)
+    }
+  }
+
+  onDayLengthBtn() {
+    this.inputRef.current.focus()
+    this.setState({ isDayLengthBtn: !this.state.isDayLengthBtn })
+  }
+
+  renderDayLengthBtn() {
+    return (
+      <div className="daylength-container">
+        <button
+          ref={this.dayBtnRef}
+          className={`daylength-btn ${
+            this.state.isDayLengthBtn ? "selected-daylength-btn" : ""
+          }`}
+          onClick={this.onDayLengthBtn}
+        >
+          <span>{`${this.state.dayTime / 60} ${i18n["hrs"]}`}</span>
+          <div className="sun-circle">
+            <img className="daylength-icon" src="sun_icon.svg" />
+          </div>
+        </button>
+        <span
+          className="daylength-input-container"
+          ref={this.inputRef}
+          style={{
+            opacity: !this.isHidden() && this.state.isDayLengthBtn ? 1 : 0,
+            visibility:
+              !this.isHidden() && this.state.isDayLengthBtn
+                ? "visible"
+                : "hidden",
+          }}
+        >
+          <p>{i18n["all_day"]}:</p>
+          <p>{`${this.state.dayTime / 60} ${i18n["hrs"]}`}</p>
+          <input
+            style={
+              {
+                "--ratio":
+                  (this.state.dayTime - this.props.minDayTime) /
+                  (this.props.maxDayTime - this.props.minDayTime),
+              } as React.CSSProperties
+            }
+            className="daylength-input"
+            type="range"
+            onChange={this.onInputChange}
+            max={this.props.maxDayTime}
+            min={this.props.minDayTime}
+            value={this.state.dayTime}
+            step={60}
+          />
+        </span>
+      </div>
+    )
   }
 
   render() {
@@ -99,9 +207,10 @@ export default class Timeline extends React.Component<IProps> {
               </div>
             </div>
           </div>
+          {this.renderDayLengthBtn()}
           <button className="reset-btn" onClick={this.props.onReset}>
             <span>
-              <MediaQuery minWidth={551}>{i18n["reset_places"]}</MediaQuery>
+              <MediaQuery minWidth={576}>{i18n["reset_places"]}</MediaQuery>
               <img className="reset-icon" src="reset_icon.svg" />
             </span>
           </button>

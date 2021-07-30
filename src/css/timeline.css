@@ -107,7 +107,7 @@
   padding-top: 0.7rem;
   padding-bottom: 0.7rem;
   background-color: var(--main-color);
-  margin: 0 0 0 1rem;
+  margin: 0 0 0 0.5rem;
   transition: background-color 0.1s linear;
 }
 
@@ -138,6 +138,101 @@
   display: flex;
 }
 
+.daylength-icon {
+  position: relative;
+  height: 1.2em;
+  width: 1.2em;
+  margin: 0;
+  top: 50%;
+  left: 50%;
+  transform: translate(-65%, -50%);
+}
+
+.sun-circle {
+  position: absolute;
+  background-color: #ffdd2b;
+  border-radius: 50%;
+  width: 1.6em;
+  height: 1.6em;
+  top: -0.3em;
+  right: 0.3em;
+}
+
+.daylength-btn > span {
+  width: 1.2em;
+  height: 1.2em;
+  margin: 0;
+  color: var(--main-color);
+  white-space: nowrap;
+}
+
+.daylength-btn {
+  padding: 0.7rem;
+  background-color: white;
+  border: 2px solid white;
+  box-shadow: 0px 1px 2px rgba(0, 0, 0, 0.2);
+  transform: background-color 0.1s linear;
+  margin: 0 0.5rem 0 0;
+}
+
+.daylength-btn:hover {
+  background-color: rgb(255, 255, 255, 0.2);
+  border: 2px solid rgb(255, 255, 255, 0.2);
+}
+
+.selected-daylength-btn {
+  background-color: rgb(255, 255, 255, 0.2);
+  border: 2px solid rgb(255, 255, 255, 0.2);
+  box-shadow: 0px 0px 1px rgba(0, 0, 0, 0.2);
+}
+
+.daylength-container {
+  position: relative;
+}
+
+.daylength-input-container {
+  position: absolute;
+  display: flex;
+  background: #ffffff;
+  box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.15);
+  border-radius: 14px;
+  top: -1rem;
+  left: 0;
+  z-index: 201;
+  transform: translateY(-100%);
+  padding: 0.5rem 1rem;
+  transition: opacity 0.2s linear;
+}
+
+.daylength-input-container > p {
+  margin: 0;
+  white-space: nowrap;
+  font-family: Gilroy;
+  font-style: normal;
+  font-weight: 600;
+  font-size: 20px;
+  line-height: 25px;
+  color: var(--font-color);
+}
+
+.daylength-input-container p:nth-child(2) {
+  color: var(--main-color);
+  margin-right: 1em;
+  margin-left: 0.3em;
+  width: 40px;
+}
+
+.daylength-input {
+  position: relative;
+  color: var(--main-color);
+  margin: 0;
+  z-index: 201;
+  top: 0;
+  left: 0;
+  width: 20vw;
+  max-width: 300px;
+}
+
 @media screen and (max-width: 950px) {
   .time-bar-container > div > p:nth-child(2) {
     display: none;
@@ -150,10 +245,10 @@
   }
   .timeline-container {
     flex-wrap: wrap;
+    justify-content: flex-end;
   }
   .full-time-bar {
     flex-basis: 100%;
-    /* margin-bottom: 10px; */
   }
   .bar-header {
     width: 100%;
@@ -165,12 +260,13 @@
     min-height: 130px;
     min-width: 250px;
   }
-  .reset-btn {
-    justify-self: right;
+
+  .daylength-input {
+    width: 30vw;
   }
 }
 
-@media screen and (max-width: 550px) {
+@media screen and (max-width: 575px) {
   .time-bar-container > div > p:nth-child(2) {
     display: none;
   }
@@ -194,14 +290,34 @@
   }
 }
 
-@media screen and (max-width: 420px) {
+@media screen and (max-width: 440px) {
   .places-btn {
-    padding-top: 1rem;
-    padding-bottom: 1rem;
+    padding: 0.7rem;
   }
 
   .places-btn > span {
     font-size: 16px;
     line-height: 20px;
+  }
+
+  .reset-btn > span {
+    font-size: 16px;
+    line-height: 20px;
+  }
+
+  .daylength-btn > span {
+    font-size: 16px;
+    line-height: 20px;
+    width: 1.2em;
+    height: 1.2em;
+  }
+
+  .daylength-icon {
+    width: 1em;
+  }
+
+  .sun-circle {
+    width: 1.4em;
+    height: 1.4em;
   }
 }

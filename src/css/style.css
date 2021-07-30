@@ -60,3 +60,82 @@ button > span {
   background-color: #000;
   opacity: 0.6;
 }
+
+[type="range"] {
+  -webkit-appearance: none;
+  background: transparent;
+  margin: 12px 0;
+  --sx: calc(0.5 * 10px + var(--ratio) * (100% - 10px));
+}
+
+[type="range"]::-moz-focus-outer {
+  border: 0;
+}
+
+[type="range"]:focus {
+  outline: 0;
+}
+
+[type="range"]::-webkit-progress-value {
+  background: var(--main-color);
+  border-radius: 6px;
+  height: 5px;
+  cursor: default;
+  transition: all 0.2s ease;
+}
+
+[type="range"]::-webkit-slider-runnable-track {
+  cursor: default;
+  width: 100%;
+  height: 5px;
+  border-radius: 6px;
+  background: linear-gradient(var(--main-color), var(--main-color)) 0 /
+      var(--sx) 100% no-repeat,
+    rgb(0, 0, 0, 0.1);
+}
+
+[type="range"]::-webkit-slider-thumb {
+  box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.25);
+  background: #fff;
+  border: 2px solid #fff;
+  border-radius: 12px;
+  box-sizing: border-box;
+  cursor: default;
+  height: 24px;
+  width: 24px;
+  -webkit-appearance: none;
+  margin-top: -10px;
+}
+
+[type="range"]::-moz-range-track {
+  cursor: default;
+  width: 100%;
+  background: rgb(0, 0, 0, 0.1);
+  height: 5px;
+  border-radius: 6px;
+}
+
+[type="range"]::-moz-range-thumb {
+  box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.25);
+  background: #fff;
+  border: 2px solid #fff;
+  border-radius: 12px;
+  box-sizing: border-box;
+  cursor: default;
+  height: 24px;
+  width: 24px;
+}
+
+[type="range"]::-moz-range-progress {
+  background: var(--main-color);
+  border-radius: 6px;
+  height: 5px;
+  cursor: default;
+}
+
+[type="range"]:disabled::-webkit-slider-thumb,
+[type="range"]:disabled::-moz-range-thumb,
+[type="range"]:disabled::-ms-thumb,
+[type="range"]:disabled::-webkit-slider-runnable-track {
+  cursor: not-allowed;
+}
