@@ -201,7 +201,7 @@
   z-index: 201;
   transform: translateY(-100%);
   padding: 0.5rem 1rem;
-  transition: opacity 0.2s linear;
+  transition: opacity 0.2s ease-in-out;
 }
 
 .daylength-input-container > p {
