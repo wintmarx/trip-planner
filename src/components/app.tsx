@@ -9,12 +9,14 @@ import ym from "react-yandex-metrika"
 import { Api, TripRequestPlace } from "../api"
 import TabSelector, { Tab } from "./tab-selector"
 import CircleLoader from "react-spinners/CircleLoader"
+import Email from "./email"
 
 enum Page {
   Greetings,
   PlaceTags,
   ThemeTags,
   Places,
+  Email,
   Final,
   Loading,
 }
@@ -75,11 +77,13 @@ export class App extends React.Component<IProps, IState> {
     this.onPlacesSelected = this.onPlacesSelected.bind(this)
     this.onPlacesClosed = this.onPlacesClosed.bind(this)
     this.onEnterValidEmail = this.onEnterValidEmail.bind(this)
-    this.onFinalClosed = this.onFinalClosed.bind(this)
+    this.onSend = this.onSend.bind(this)
     this.clearState = this.clearState.bind(this)
     this.isTabsVisible = this.isTabsVisible.bind(this)
     this.renderTabs = this.renderTabs.bind(this)
     this.renderLoading = this.renderLoading.bind(this)
+    this.onFinalClosed = this.onFinalClosed.bind(this)
+    this.onEmailMiss = this.onEmailMiss.bind(this)
     this.state = {
       page: Page.Loading,
       selTags: this.defaultState.selTags,
@@ -170,14 +174,14 @@ export class App extends React.Component<IProps, IState> {
   }
 
   onPlacesClosed() {
-    this.setState({ page: Page.Final })
+    this.setState({ page: Page.Email })
   }
 
   onEnterValidEmail(email: string) {
     ym("reachGoal", "valid-email")
   }
 
-  onFinalClosed(email: string) {
+  onSend(email: string) {
     ym("reachGoal", "route", {
       email: email,
       selTags: this.state.selTags,
@@ -202,7 +206,7 @@ export class App extends React.Component<IProps, IState> {
     this.api
       .requestTrip({ email: email, places: requestPlaces })
       .then(res => {
-        this.clearState()
+        this.setState({ page: Page.Final, apiError: false })
       })
       .catch(err => {
         this.setState({ apiError: true })
@@ -210,6 +214,14 @@ export class App extends React.Component<IProps, IState> {
       .finally(() => {
         this.setState({ showLoading: false })
       })
+  }
+
+  onFinalClosed() {
+    this.clearState()
+  }
+
+  onEmailMiss() {
+    this.setState({ page: Page.Email })
   }
 
   isTabsVisible() {
@@ -299,13 +311,15 @@ export class App extends React.Component<IProps, IState> {
             onExit={this.onPlacesClosed}
           />
         )}
-
-        {this.state.page == Page.Final && (
-          <Final
+        {this.state.page == Page.Email && (
+          <Email
             onEnterValidEmail={this.onEnterValidEmail}
-            onExit={this.onFinalClosed}
+            onSend={this.onSend}
             error={this.state.apiError}
           />
+        )}
+        {this.state.page == Page.Final && (
+          <Final onMiss={this.onEmailMiss} onExit={this.onFinalClosed} />
         )}
 
         {this.renderLoading()}

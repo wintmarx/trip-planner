@@ -44,8 +44,8 @@ export default class PlaceSelector extends React.Component<IProps, IState> {
       dict[place.name] =
         3 * pMatch +
         2 * tMatch +
-        (place.gmRating + place.taRating) / 5 +
-        Math.log10(place.gmReviewsCnt + place.taReviewsCnt + 1) / 2
+        (place.gmRating + place.taRating) / 10 +
+        Math.log10(place.gmReviewsCnt + place.taReviewsCnt + 1) / 10
     })
 
     const sorted = this.props.places.sort((a: PlaceData, b: PlaceData) => {

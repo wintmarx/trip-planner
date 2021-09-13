@@ -10,6 +10,7 @@ interface IProps {
   showInfo: boolean
   checked: boolean
   debug?: boolean
+  style?: React.CSSProperties
   onInfoClick?: (e: any) => void
   onClick?: (checked: boolean, e: any) => void
 }
@@ -31,6 +32,7 @@ export default class PlaceCard extends React.Component<IProps> {
   render() {
     return (
       <div
+        style={this.props.style}
         className={`place-card ${
           this.props.checked ? "place-checked" : "card-grad"
         }`}

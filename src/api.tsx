@@ -20,7 +20,7 @@ export class Api {
   constructor() {
     this.client = axios.create({
       baseURL: process.env.GATSBY_API_ENDPOINT,
-      timeout: 15000,
+      timeout: 45000,
       headers: {
         "Content-Type": "application/json",
       },
