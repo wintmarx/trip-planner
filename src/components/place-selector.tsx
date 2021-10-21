@@ -1,11 +1,10 @@
 import React from "react"
-import { Tags } from "./app"
-import { PlaceData } from "./app"
-import i18n from "../i18n/ru.json"
+import ym from "react-yandex-metrika"
 import "../css/place-selector.css"
+import i18n from "../i18n/ru.json"
+import { PlaceData, Tags } from "./app"
 import PlaceCard from "./place-card"
 import Timeline from "./timeline"
-import ym from "react-yandex-metrika"
 
 type PlaceState = {
   checked: boolean
@@ -131,13 +130,26 @@ export default class PlaceSelector extends React.Component<IProps, IState> {
     return (
       <>
         <h3 className="places-header">{i18n["select_places"]}</h3>
+        {/* <p
+          className="places-desc"
+          style={{
+            opacity: `${
+              this.isTimelineHidden.call(this) ? "inherit" : "0"
+            }`,
+            transform: `scaleY(${
+                this.isTimelineHidden.call(this) ? "1" : "0"
+              })`
+          }}
+        >
+          {i18n["select_places_desc"]}
+        </p> */}
         <div
+          className="cards-container"
           style={{
             marginBottom: `${
               this.isTimelineHidden.call(this) ? "inherit" : "max(11vh, 140px)"
             }`,
           }}
-          className="cards-container"
         >
           {this.renderCards.call(this)}
         </div>

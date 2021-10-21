@@ -10,6 +10,17 @@
   pointer-events: none;
 }
 
+.places-desc {
+    text-align: center;
+    font-size: 20px;
+    line-height: 24px;
+    font-family: var(--theme-font-family);
+    margin-bottom: 2rem;
+    pointer-events: none;
+    transform-origin: top;
+    transition: opacity 300ms ease-in-out, transform 300ms ease-in-out;
+}
+
 .cards-container {
   display: flex;
   justify-content: space-evenly;
@@ -26,11 +37,16 @@
   justify-items: stretch;
 }
 
-@media screen and (max-width: 500px) {
+@media screen and (max-width: 520px) {
   .places-header {
     text-align: left;
     margin: 0;
     font-size: 24px;
     line-height: 30px;
+  }
+  .places-desc {
+    text-align: left;
+    font-size: 18px;
+    line-height: 20px;
   }
 }
