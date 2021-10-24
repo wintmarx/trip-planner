@@ -1,0 +1,112 @@
+@import "../../css/style.css";
+
+.policy-content {
+  white-space: pre-wrap;
+  padding: 0.5rem 0;
+  font-family: var(--theme-font-family);
+  font-size: 22px;
+  line-height: 27px;
+  color: var(--text-color);
+  opacity: 0.6;
+}
+
+.policy-content > p {
+  margin: 0;
+  padding: 0;
+}
+
+.policy-content > h1 {
+  margin: 0;
+  font-size: 30px;
+  line-height: 35px;
+  margin-bottom: -1rem;
+}
+
+.policy-content > h2 {
+  margin: 0;
+  font-size: 24px;
+  line-height: 30px;
+  margin-bottom: -1rem;
+}
+
+.policy-content > h3 {
+  margin: 0;
+  font-size: 22px;
+  line-height: 28px;
+  margin-bottom: -1rem;
+}
+
+.policy-content > ul {
+  padding: 0;
+  margin-bottom: -1rem;
+  margin-top: -2.5rem;
+}
+
+.policy-content > ul > li {
+  margin: 0;
+  margin-bottom: -1rem;
+}
+
+a {
+  color: var(--main-color);
+}
+
+.policy-header {
+  margin: 0;
+  padding: 0.5rem 0;
+  font-family: var(--theme-font-family);
+  font-weight: bold;
+  font-size: 50px;
+  line-height: 62px;
+  text-align: center;
+  color: var(--text-color);
+}
+
+.policy-btn {
+  margin-bottom: 1rem;
+  float: right;
+}
+
+.policy-btn:hover {
+  background-color: #65d8c3;
+}
+
+@media screen and (max-width: 600px) {
+  .policy-header {
+    font-size: 30px;
+    line-height: 42px;
+    text-align: left;
+  }
+
+  .policy-content {
+    font-size: 18px;
+    line-height: 26px;
+  }
+
+  .policy-content > h1 {
+    font-size: 20px;
+    line-height: 25px;
+  }
+
+  .policy-content > h2 {
+    font-size: 18px;
+    line-height: 22px;
+  }
+
+  .policy-content > h3 {
+    font-size: 18px;
+    line-height: 22px;
+  }
+}
+
+@media screen and (max-width: 420px) {
+  .policy-header {
+    font-size: 24px;
+    line-height: 30px;
+  }
+
+  .policy-content {
+    font-size: 18px;
+    line-height: 26px;
+  }
+}

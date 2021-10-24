@@ -10,6 +10,7 @@ import { Api, TripRequestPlace } from "../api"
 import TabSelector, { Tab } from "./tab-selector"
 import CircleLoader from "react-spinners/CircleLoader"
 import Email from "./email"
+import PrivacyPolicy from "./privacy_policy/privacy_policy"
 
 enum Page {
   Greetings,
@@ -19,6 +20,7 @@ enum Page {
   Email,
   Final,
   Loading,
+  PrivacyPolicy,
 }
 
 export type Tags = {
@@ -84,6 +86,7 @@ export class App extends React.Component<IProps, IState> {
     this.renderLoading = this.renderLoading.bind(this)
     this.onFinalClosed = this.onFinalClosed.bind(this)
     this.onEmailMiss = this.onEmailMiss.bind(this)
+    this.onPrivacyPolicyExit = this.onPrivacyPolicyExit.bind(this)
     this.state = {
       page: Page.Loading,
       selTags: this.defaultState.selTags,
@@ -224,6 +227,8 @@ export class App extends React.Component<IProps, IState> {
     this.setState({ page: Page.Email })
   }
 
+  onPrivacyPolicyExit() {}
+
   isTabsVisible() {
     return (
       this.state.page == Page.PlaceTags ||
@@ -280,6 +285,10 @@ export class App extends React.Component<IProps, IState> {
       >
         {this.state.page == Page.Greetings && (
           <Greetings onExit={this.onGreetingsNext} />
+        )}
+
+        {this.state.page == Page.PrivacyPolicy && (
+          <PrivacyPolicy onExit={this.onPrivacyPolicyExit} />
         )}
 
         {this.isTabsVisible() && this.renderTabs()}
