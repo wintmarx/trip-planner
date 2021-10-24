@@ -36,20 +36,7 @@
 }
 
 .email-input {
-  font-family: var(--theme-font-family);
   width: 30%;
-  border-radius: 100px;
-  background-color: transparent;
-  border: 2px solid #d9d7d3;
-  box-sizing: border-box;
-  padding: 1rem 1.5rem;
-  color: var(--text-color);
-}
-
-.email-input:focus {
-  outline: none;
-  border-color: var(--main-color);
-  /* box-shadow: 0 0 10px var(--main-color); */
 }
 
 .email-input-error {

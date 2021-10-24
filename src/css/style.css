@@ -61,6 +61,21 @@ button > span {
   opacity: 0.6;
 }
 
+input {
+  font-family: var(--theme-font-family) !important;
+  border-radius: 100px;
+  background-color: transparent;
+  border: 2px solid #d9d7d3;
+  box-sizing: border-box;
+  padding: 1rem 1.5rem;
+  color: var(--text-color);
+}
+
+input:focus {
+  outline: none;
+  border-color: var(--main-color);
+}
+
 [type="range"] {
   -webkit-appearance: none;
   background: transparent;
