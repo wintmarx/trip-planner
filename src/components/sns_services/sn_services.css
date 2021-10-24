@@ -1,0 +1,152 @@
+@import "../../css/style.css";
+
+.sns-header {
+  margin: 0;
+  padding: 0.5rem 0;
+  font-family: var(--theme-font-family);
+  font-weight: bold;
+  font-size: 50px;
+  line-height: 62px;
+  text-align: center;
+  color: var(--text-color);
+}
+
+.sns-desc {
+  margin: 0 auto 1rem auto;
+  padding: 0.5rem 0;
+  font-family: var(--theme-font-family);
+  font-size: 22px;
+  line-height: 27px;
+  color: var(--text-color);
+  opacity: 0.6;
+  max-width: 650px;
+  text-align: center;
+}
+
+.sns-input {
+  width: 100%;
+}
+
+.sns-input-error {
+  border-color: tomato;
+}
+
+.sns-input-error:focus {
+  border-color: tomato;
+}
+
+.sns-container {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  align-items: center;
+  column-gap: 0.5rem;
+  row-gap: 1rem;
+  width: 500px;
+  margin: 0 auto 0 auto;
+}
+
+.sns-icon {
+  width: 3rem;
+  height: 3rem;
+}
+
+.sns-btn-container {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  column-gap: 1.5rem;
+  margin: 2rem auto 0 auto;
+  width: 500px;
+}
+
+.sns-btn {
+  width: 100%;
+}
+
+.sns-btn:disabled {
+  cursor: not-allowed;
+  pointer-events: none;
+  background-color: #3d9484;
+}
+
+.sns-btn:disabled > span {
+  color: #aaaaaa;
+}
+
+.sns-btn:hover {
+  background-color: #65d8c3;
+}
+
+.sns-skip-btn {
+  padding-top: 0.7rem;
+  padding-bottom: 0.7rem;
+  background: transparent;
+  color: var(--text-color);
+  width: 100%;
+  border: 2px solid var(--text-color);
+}
+
+.sns-skip-btn:hover {
+  background-color: #d9d7d3;
+}
+
+@media screen and (max-width: 600px) {
+  .sns-btn-container {
+    width: 90%;
+  }
+
+  .sns-container {
+    width: 90%;
+  }
+
+  .sns-desc {
+    text-align: left;
+  }
+  .sns-header {
+    text-align: left;
+  }
+}
+
+@media screen and (max-width: 500px) {
+  .sns-btn-container {
+    width: 90%;
+    grid-template-columns: 1fr;
+    row-gap: 1rem;
+    margin-bottom: 1rem;
+  }
+
+  .sns-btn {
+    grid-row: 1;
+  }
+
+  .sns-btn > span {
+    font-size: 18px;
+    line-height: 26px;
+  }
+
+  .sns-skip-btn > span {
+    font-size: 18px;
+    line-height: 26px;
+  }
+
+  .sns-container {
+    width: 100%;
+  }
+
+  .sns-icon {
+    width: 2rem;
+  }
+
+  .sns-input {
+    height: 3rem;
+  }
+
+  .sns-header {
+    font-size: 30px;
+    line-height: 42px;
+  }
+
+  .sns-desc {
+    font-size: 18px;
+    line-height: 26px;
+  }
+}

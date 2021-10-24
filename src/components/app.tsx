@@ -10,10 +10,12 @@ import { Api, TripRequestPlace } from "../api"
 import TabSelector, { Tab } from "./tab-selector"
 import CircleLoader from "react-spinners/CircleLoader"
 import Email from "./email"
+import SNServices, { SNSProfiles } from "./sns_services/sn_services"
 import PrivacyPolicy from "./privacy_policy/privacy_policy"
 
 enum Page {
   Greetings,
+  SNServices,
   PlaceTags,
   ThemeTags,
   Places,
@@ -86,6 +88,8 @@ export class App extends React.Component<IProps, IState> {
     this.renderLoading = this.renderLoading.bind(this)
     this.onFinalClosed = this.onFinalClosed.bind(this)
     this.onEmailMiss = this.onEmailMiss.bind(this)
+    this.onSNSExit = this.onSNSExit.bind(this)
+    this.onSNSSkip = this.onSNSSkip.bind(this)
     this.onPrivacyPolicyExit = this.onPrivacyPolicyExit.bind(this)
     this.state = {
       page: Page.Loading,
@@ -139,7 +143,7 @@ export class App extends React.Component<IProps, IState> {
   }
 
   onGreetingsNext() {
-    this.setState({ page: Page.PlaceTags })
+    this.setState({ page: Page.SNServices })
     ym("reachGoal", "greetings")
   }
 
@@ -227,6 +231,14 @@ export class App extends React.Component<IProps, IState> {
     this.setState({ page: Page.Email })
   }
 
+  onSNSExit(profiles: SNSProfiles) {
+    this.setState({ page: Page.PlaceTags })
+  }
+
+  onSNSSkip() {
+    this.setState({ page: Page.PlaceTags })
+  }
+
   onPrivacyPolicyExit() {}
 
   isTabsVisible() {
@@ -285,6 +297,10 @@ export class App extends React.Component<IProps, IState> {
       >
         {this.state.page == Page.Greetings && (
           <Greetings onExit={this.onGreetingsNext} />
+        )}
+
+        {this.state.page == Page.SNServices && (
+          <SNServices onExit={this.onSNSExit} onSkip={this.onSNSSkip} />
         )}
 
         {this.state.page == Page.PrivacyPolicy && (
