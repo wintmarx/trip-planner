@@ -1,0 +1,89 @@
+@import "../../css/style.css";
+
+.policy-popup {
+  margin: 0 auto 0 auto;
+  position: absolute;
+  left: 50%;
+  bottom: 0;
+  z-index: 999;
+  width: 50%;
+  min-width: 800px;
+  height: 10vh;
+  min-height: 100px;
+  background: var(--bg-color);
+  border: 1px solid #e1e1e1;
+  box-sizing: border-box;
+  box-shadow: 0px -4px 30px rgba(0, 0, 0, 0.06);
+  transition: transform 300ms;
+  transform: translateX(-50%);
+}
+
+.policy-popup-container {
+  display: grid;
+  margin: 1rem 1rem;
+  grid-template-columns: 1fr auto auto;
+  align-items: center;
+  column-gap: 1rem;
+}
+
+.policy-popup-desc {
+  margin: 0;
+  font-family: var(--theme-font-family);
+  font-size: 22px;
+  line-height: 27px;
+  color: var(--text-color);
+  opacity: 0.6;
+  text-align: left;
+}
+
+.policy-popup-btn:hover {
+  background-color: #65d8c3;
+}
+
+.more-policy-popup-btn {
+  padding-top: 0.7rem;
+  padding-bottom: 0.7rem;
+  background: transparent;
+  color: var(--text-color);
+  width: 100%;
+  border: 2px solid var(--text-color);
+}
+
+.more-policy-popup-btn:hover {
+  background-color: #d9d7d3;
+}
+
+@media screen and (max-width: 800px) {
+  .policy-popup {
+    width: 100%;
+    min-width: unset;
+  }
+
+  .policy-popup-desc,
+  .policy-popup-btn > span,
+  .more-policy-popup-btn > span {
+    font-size: 18px;
+    line-height: 26px;
+  }
+}
+
+@media screen and (max-width: 500px) {
+  .policy-popup-container {
+    display: grid;
+    margin: 1rem 1rem;
+    grid-template-columns: 1fr 1fr;
+    align-items: center;
+    column-gap: 0.5rem;
+    row-gap: 0.5rem;
+  }
+
+  .policy-popup {
+    height: 10vh;
+    min-height: 130px;
+  }
+
+  .policy-popup-desc {
+    grid-column-start: 1;
+    grid-column-end: 3;
+  }
+}

@@ -12,6 +12,7 @@ import CircleLoader from "react-spinners/CircleLoader"
 import Email from "./email"
 import SNServices, { SNSProfiles } from "./sns_services/sn_services"
 import PrivacyPolicy from "./privacy_policy/privacy_policy"
+import PrivacyPolicyPopup from "./privacy_policy_popup/privacy_policy_popup"
 
 enum Page {
   Greetings,
@@ -58,9 +59,11 @@ interface IState {
   selPlaces: string[]
   showLoading: boolean
   apiError: boolean
+  isPolicyAccepted: boolean
 }
 
 const STORAGE_NAME = "trip-planner"
+const PRIVACY_STORAGE_NAME = `${STORAGE_NAME}-privacy`
 
 export class App extends React.Component<IProps, IState> {
   defaultState = {
@@ -69,8 +72,10 @@ export class App extends React.Component<IProps, IState> {
     selPlaces: [],
     showLoading: false,
     apiError: false,
+    isPolicyAccepted: false,
   }
   api = new Api()
+  previousPage: Page = this.defaultState.page
   constructor(props: IProps) {
     super(props)
     this.onGreetingsNext = this.onGreetingsNext.bind(this)
@@ -91,24 +96,32 @@ export class App extends React.Component<IProps, IState> {
     this.onSNSExit = this.onSNSExit.bind(this)
     this.onSNSSkip = this.onSNSSkip.bind(this)
     this.onPrivacyPolicyExit = this.onPrivacyPolicyExit.bind(this)
+    this.onPrivacyPolicyAccept = this.onPrivacyPolicyAccept.bind(this)
+    this.onPrivacyPolicyMore = this.onPrivacyPolicyMore.bind(this)
     this.state = {
       page: Page.Loading,
       selTags: this.defaultState.selTags,
       selPlaces: this.defaultState.selPlaces,
       showLoading: this.defaultState.showLoading,
       apiError: this.defaultState.apiError,
+      isPolicyAccepted: false,
     }
   }
 
   clearState() {
-    this.setState(this.defaultState)
+    var state = this.defaultState
+    state.isPolicyAccepted = this.state.isPolicyAccepted
+    this.setState(state)
     localStorage.removeItem(STORAGE_NAME)
   }
 
   componentDidMount() {
     var data_str = localStorage.getItem(STORAGE_NAME)
+    var isPolicyAccepted = localStorage.getItem(PRIVACY_STORAGE_NAME)
     if (!data_str) {
-      this.setState(this.defaultState)
+      var state = this.defaultState
+      state.isPolicyAccepted = !!isPolicyAccepted
+      this.setState(state)
       return
     }
     try {
@@ -123,6 +136,7 @@ export class App extends React.Component<IProps, IState> {
         throw new Error()
       }
       data.state.apiError = this.defaultState.apiError
+      data.state.isPolicyAccepted = !!isPolicyAccepted
       this.setState(data.state)
       ym("reachGoal", "restore")
     } catch (error) {
@@ -132,7 +146,14 @@ export class App extends React.Component<IProps, IState> {
   }
 
   componentDidUpdate() {
-    if (this.state.page == Page.Greetings || this.state.page == Page.Loading) {
+    if (this.state.isPolicyAccepted) {
+      localStorage.setItem(PRIVACY_STORAGE_NAME, "1")
+    }
+    if (
+      this.state.page == Page.Greetings ||
+      this.state.page == Page.PrivacyPolicy ||
+      this.state.page == Page.Loading
+    ) {
       return
     }
     localStorage.setItem(
@@ -239,7 +260,18 @@ export class App extends React.Component<IProps, IState> {
     this.setState({ page: Page.PlaceTags })
   }
 
-  onPrivacyPolicyExit() {}
+  onPrivacyPolicyExit() {
+    this.setState({ page: this.previousPage, isPolicyAccepted: true })
+  }
+
+  onPrivacyPolicyAccept() {
+    this.setState({ isPolicyAccepted: true })
+  }
+
+  onPrivacyPolicyMore() {
+    this.previousPage = this.state.page
+    this.setState({ page: Page.PrivacyPolicy })
+  }
 
   isTabsVisible() {
     return (
@@ -346,6 +378,13 @@ export class App extends React.Component<IProps, IState> {
         {this.state.page == Page.Final && (
           <Final onMiss={this.onEmailMiss} onExit={this.onFinalClosed} />
         )}
+        {!this.state.isPolicyAccepted &&
+          this.state.page != Page.PrivacyPolicy && (
+            <PrivacyPolicyPopup
+              onExit={this.onPrivacyPolicyAccept}
+              onInfo={this.onPrivacyPolicyMore}
+            />
+          )}
 
         {this.renderLoading()}
       </Layout>
