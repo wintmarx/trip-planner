@@ -130,19 +130,19 @@ export default class PlaceSelector extends React.Component<IProps, IState> {
     return (
       <>
         <h3 className="places-header">{i18n["select_places"]}</h3>
-        {/* <p
+        <p
           className="places-desc"
-          style={{
-            opacity: `${
-              this.isTimelineHidden.call(this) ? "inherit" : "0"
-            }`,
-            transform: `scaleY(${
-                this.isTimelineHidden.call(this) ? "1" : "0"
-              })`
-          }}
+          //   style={{
+          //     opacity: `${
+          //       this.isTimelineHidden.call(this) ? "inherit" : "0"
+          //     }`,
+          //     transform: `scaleY(${
+          //         this.isTimelineHidden.call(this) ? "1" : "0"
+          //       })`
+          //   }}
         >
-          {i18n["select_places_desc"]}
-        </p> */}
+          {i18n["select_places_help"]}
+        </p>
         <div
           className="cards-container"
           style={{
