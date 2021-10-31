@@ -49,8 +49,9 @@ export default class SNServices extends React.Component<IProps, IState> {
   }
 
   isInputValid(profile: string) {
-    const re = /^([A-Za-z0-9-_\.]+)$/
-    return profile.length == 0 || re.test(profile)
+    // const re = /^([A-Za-z0-9-_\.]+)$/
+    // return profile.length == 0 || re.test(profile)
+    return true
   }
 
   onVKChange(profile: string) {
