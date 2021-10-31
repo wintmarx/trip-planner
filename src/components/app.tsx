@@ -13,6 +13,7 @@ import Email from "./email"
 import SNServices, { SNSProfiles } from "./sns_services/sn_services"
 import PrivacyPolicy from "./privacy_policy/privacy_policy"
 import PrivacyPolicyPopup from "./privacy_policy_popup/privacy_policy_popup"
+import ReactGA from "react-ga4"
 
 enum Page {
   Greetings,
@@ -98,6 +99,7 @@ export class App extends React.Component<IProps, IState> {
     this.onPrivacyPolicyExit = this.onPrivacyPolicyExit.bind(this)
     this.onPrivacyPolicyAccept = this.onPrivacyPolicyAccept.bind(this)
     this.onPrivacyPolicyMore = this.onPrivacyPolicyMore.bind(this)
+    this.onTabChanged = this.onTabChanged.bind(this)
     this.state = {
       page: Page.Loading,
       selTags: this.defaultState.selTags,
@@ -106,6 +108,7 @@ export class App extends React.Component<IProps, IState> {
       apiError: this.defaultState.apiError,
       isPolicyAccepted: false,
     }
+    ReactGA.initialize(process.env.GATSBY_GA_ID || "")
   }
 
   clearState() {
@@ -113,6 +116,12 @@ export class App extends React.Component<IProps, IState> {
     state.isPolicyAccepted = this.state.isPolicyAccepted
     this.setState(state)
     localStorage.removeItem(STORAGE_NAME)
+    ym("reachGoal", "greetings")
+    ReactGA.send({ hitType: "pageview", title: Page[Page.Greetings] })
+    ReactGA.event({
+      category: "state",
+      action: "clear_state",
+    })
   }
 
   componentDidMount() {
@@ -122,6 +131,8 @@ export class App extends React.Component<IProps, IState> {
       var state = this.defaultState
       state.isPolicyAccepted = !!isPolicyAccepted
       this.setState(state)
+      ym("reachGoal", "greetings")
+      ReactGA.send({ hitType: "pageview", title: Page[Page.Greetings] })
       return
     }
     try {
@@ -130,7 +141,13 @@ export class App extends React.Component<IProps, IState> {
       const millisInHr = 1000 * 60 * 60
       const isExpired = !data.date || Date.now() - data.date > millisInHr * 5
       if (isExpired) {
-        ym("reachGoal", "expired-state")
+        ym("reachGoal", "expired_state")
+        ReactGA.send({
+          hitType: "event",
+          eventCategory: "state",
+          eventAction: "expired_state",
+          title: Page[this.state.page],
+        })
       }
       if (isExpired || (!restore && !window.confirm(i18n["restore_session"]))) {
         throw new Error()
@@ -139,9 +156,14 @@ export class App extends React.Component<IProps, IState> {
       data.state.isPolicyAccepted = !!isPolicyAccepted
       this.setState(data.state)
       ym("reachGoal", "restore")
+      ReactGA.send({
+        hitType: "event",
+        eventCategory: "state",
+        eventAction: "restore_state",
+        title: Page[this.state.page],
+      })
     } catch (error) {
       this.clearState()
-      ym("reachGoal", "no-restore")
     }
   }
 
@@ -161,52 +183,73 @@ export class App extends React.Component<IProps, IState> {
       JSON.stringify({ date: Date.now(), state: this.state })
     )
     sessionStorage.setItem(STORAGE_NAME, "restore")
+    ReactGA.send({
+      hitType: "event",
+      eventCategory: "state",
+      eventAction: "save_state",
+      title: Page[this.state.page],
+    })
   }
 
   onGreetingsNext() {
     this.setState({ page: Page.SNServices })
-    ym("reachGoal", "greetings")
+    ReactGA.send({ hitType: "pageview", title: Page[Page.SNServices] })
   }
 
   onPlaceTagsSelected(selTags: string[]) {
     this.setState({
       selTags: { places: selTags, themes: this.state.selTags.themes },
     })
+    ReactGA.event({
+      category: "tags",
+      action: "select_place_tags",
+      label: selTags.toString(),
+    })
   }
 
   onPlaceTagsClosed() {
-    ym("reachGoal", "place-tags", { placeTags: this.state.selTags.places })
-    this.setState({
-      page: Page.ThemeTags,
-    })
+    ReactGA.send({ hitType: "pageview", title: Page[Page.ThemeTags] })
+    this.setState({ page: Page.ThemeTags })
   }
 
   onThemeTagsSelected(selTags: string[]) {
     this.setState({
       selTags: { places: this.state.selTags.places, themes: selTags },
     })
-  }
-
-  onThemeTagsClosed() {
-    ym("reachGoal", "theme-tags", { themeTags: this.state.selTags.themes })
-    this.setState({
-      page: Page.Places,
+    ReactGA.event({
+      category: "tags",
+      action: "select_theme_tags",
+      label: selTags.toString(),
     })
   }
 
+  onThemeTagsClosed() {
+    this.setState({ page: Page.Places })
+    ReactGA.send({ hitType: "pageview", title: Page[Page.Places] })
+  }
+
   onPlacesSelected(selPlaces: string[]) {
-    ym("reachGoal", "places", { selPlaces: this.state.selPlaces })
-    this.setState({
-      selPlaces: selPlaces,
+    this.setState({ selPlaces: selPlaces })
+    ym("reachGoal", "places", { selPlaces: selPlaces })
+    ReactGA.event({
+      category: "places",
+      action: "select_places",
+      label: selPlaces.toString(),
     })
   }
 
   onPlacesClosed() {
     this.setState({ page: Page.Email })
+    ReactGA.send({ hitType: "pageview", title: Page[Page.Email] })
   }
 
   onEnterValidEmail(email: string) {
     ym("reachGoal", "valid-email")
+    ReactGA.event({
+      category: "email",
+      action: "valid_email",
+      label: email,
+    })
   }
 
   onSend(email: string) {
@@ -215,6 +258,18 @@ export class App extends React.Component<IProps, IState> {
       selTags: this.state.selTags,
       places: this.state.selPlaces,
     })
+    ReactGA.event(
+      {
+        category: "api",
+        action: "request_trip",
+      },
+      {
+        email: email,
+        selected_places: this.state.selPlaces.toString(),
+        selected_theme_tags: this.state.selTags.themes.toString(),
+        selected_place_tags: this.state.selTags.places.toString(),
+      }
+    )
     this.setState({ showLoading: true })
     const requestPlaces = this.props.places
       .filter(place => this.state.selPlaces.includes(place.id))
@@ -250,27 +305,63 @@ export class App extends React.Component<IProps, IState> {
 
   onEmailMiss() {
     this.setState({ page: Page.Email })
+    ReactGA.send({ hitType: "pageview", title: Page[Page.Email] })
+    ReactGA.event({
+      category: "email",
+      action: "miss_email",
+    })
   }
 
   onSNSExit(profiles: SNSProfiles) {
     this.setState({ page: Page.PlaceTags })
+    ReactGA.send({ hitType: "pageview", title: Page[Page.PlaceTags] })
+    ReactGA.event("sns", {
+      vk: profiles.vk,
+      fb: profiles.fb,
+      inst: profiles.inst,
+    })
   }
 
   onSNSSkip() {
     this.setState({ page: Page.PlaceTags })
+    ReactGA.send({ hitType: "pageview", title: Page[Page.PlaceTags] })
+    ReactGA.event({
+      category: "sns",
+      action: "sns_skip",
+    })
   }
 
   onPrivacyPolicyExit() {
     this.setState({ page: this.previousPage, isPolicyAccepted: true })
+    ReactGA.send({ hitType: "pageview", title: Page[this.previousPage] })
+    ReactGA.event({
+      category: "privacy_policy",
+      action: "accept_privacy_policy",
+    })
   }
 
   onPrivacyPolicyAccept() {
     this.setState({ isPolicyAccepted: true })
+    ReactGA.event({
+      category: "privacy_policy",
+      action: "accept_privacy_policy",
+    })
   }
 
   onPrivacyPolicyMore() {
     this.previousPage = this.state.page
     this.setState({ page: Page.PrivacyPolicy })
+    ReactGA.send({ hitType: "pageview", title: Page[Page.PrivacyPolicy] })
+  }
+
+  onTabChanged(page: Page) {
+    this.setState({ page: page })
+    ReactGA.send({ hitType: "pageview", title: Page[page] })
+    ReactGA.event({
+      category: "tabs",
+      action: "change_tab",
+      label: Page[page],
+    })
   }
 
   isTabsVisible() {
@@ -291,7 +382,7 @@ export class App extends React.Component<IProps, IState> {
       <TabSelector
         tabs={tabs}
         value={this.state.page}
-        onChange={(p: number) => this.setState({ page: p as Page })}
+        onChange={(p: number) => this.onTabChanged(p as Page)}
       />
     )
   }
