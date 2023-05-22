@@ -35,7 +35,7 @@ export default class Greetings extends React.Component<IProps> {
         </div>
         <StaticImage
           className="greet-img"
-          src="../images/illustration.svg"
+          src="../images/svg/illustration.svg"
           alt=""
           placeholder="none"
           loading="eager"

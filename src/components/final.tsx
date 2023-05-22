@@ -39,7 +39,7 @@ export default class Final extends React.Component<IProps> {
         </div>
         <StaticImage
           className="final-img"
-          src="../images/final.svg"
+          src="../images/svg/final.svg"
           alt=""
           placeholder="none"
           loading="eager"

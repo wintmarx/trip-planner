@@ -107,7 +107,7 @@ export default class Email extends React.Component<IProps, IState> {
         </div>
         <StaticImage
           className="email-img"
-          src="../images/final.svg"
+          src="../images/svg/final.svg"
           alt=""
           placeholder="none"
           loading="eager"
