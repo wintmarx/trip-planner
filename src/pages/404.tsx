@@ -1,21 +1,21 @@
-import { PageProps } from "gatsby"
-import React, { useEffect } from "react"
-import Layout from "../components/layout"
+import { PageProps } from "gatsby";
+import React, { useEffect } from "react";
+import Layout from "../components/layout";
 
 const Error404Page: React.FC<PageProps> = () => {
   useEffect(() => {
-    document.title = "Trip Planner"
-  }, [])
+    document.title = "Trip Planner";
+  }, []);
 
   return (
     <Layout
       headerCb={() => {
-        window.location.href = "/"
+        window.location.href = "/";
       }}
     >
-    <h1>404</h1>
+      <h1>404</h1>
     </Layout>
-  )
-}
+  );
+};
 
-export default Error404Page
+export default Error404Page;

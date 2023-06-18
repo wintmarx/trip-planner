@@ -1,15 +1,15 @@
-import React from "react"
-import i18n from "../../i18n/ru.json"
-import "./privacy_policy_popup.css"
+import React from "react";
+import i18n from "../../assets/i18n/locale/ru.json";
+import "./privacy_policy_popup.css";
 
 interface IProps {
-  onExit?: () => void
-  onInfo?: () => void
+  onExit?: () => void;
+  onInfo?: () => void;
 }
 
 export default class PrivacyPolicyPopup extends React.Component<IProps> {
   constructor(props: IProps) {
-    super(props)
+    super(props);
   }
 
   render() {
@@ -25,6 +25,6 @@ export default class PrivacyPolicyPopup extends React.Component<IProps> {
           </button>
         </div>
       </div>
-    )
+    );
   }
 }

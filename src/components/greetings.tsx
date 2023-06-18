@@ -1,16 +1,16 @@
-import React from "react"
-import { StaticImage } from "gatsby-plugin-image"
-import i18n from "../i18n/ru.json"
-import "../css/greetings.css"
-import MediaQuery from "react-responsive"
+import React from "react";
+import { StaticImage } from "gatsby-plugin-image";
+import i18n from "../assets/i18n/locale/ru.json";
+import "../css/greetings.css";
+import MediaQuery from "react-responsive";
 
 interface IProps {
-  onExit: () => void
+  onExit: () => void;
 }
 
 export default class Greetings extends React.Component<IProps> {
   constructor(props: IProps) {
-    super(props)
+    super(props);
   }
 
   render() {
@@ -35,7 +35,7 @@ export default class Greetings extends React.Component<IProps> {
         </div>
         <StaticImage
           className="greet-img"
-          src="../images/svg/illustration.svg"
+          src="../assets/images/svg/illustration.svg"
           alt=""
           placeholder="none"
           loading="eager"
@@ -50,6 +50,6 @@ export default class Greetings extends React.Component<IProps> {
           </button>
         </MediaQuery>
       </div>
-    )
+    );
   }
 }

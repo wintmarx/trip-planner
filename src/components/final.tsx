@@ -1,19 +1,19 @@
-import React from "react"
-import { StaticImage } from "gatsby-plugin-image"
-import i18n from "../i18n/ru.json"
-import "../css/final.css"
-import MediaQuery from "react-responsive"
+import React from "react";
+import { StaticImage } from "gatsby-plugin-image";
+import i18n from "../assets/i18n/locale/ru.json";
+import "../css/final.css";
+import MediaQuery from "react-responsive";
 
 interface IProps {
-  onMiss?: () => void
-  onExit?: () => void
+  onMiss?: () => void;
+  onExit?: () => void;
 }
 
 export default class Final extends React.Component<IProps> {
   constructor(props: IProps) {
-    super(props)
+    super(props);
 
-    this.renderBtnGroup = this.renderBtnGroup.bind(this)
+    this.renderBtnGroup = this.renderBtnGroup.bind(this);
   }
 
   renderBtnGroup() {
@@ -26,7 +26,7 @@ export default class Final extends React.Component<IProps> {
           {i18n["final_miss_btn"]}
         </p>
       </div>
-    )
+    );
   }
 
   render() {
@@ -39,13 +39,13 @@ export default class Final extends React.Component<IProps> {
         </div>
         <StaticImage
           className="final-img"
-          src="../images/svg/final.svg"
+          src="../assets/images/svg/final.svg"
           alt=""
           placeholder="none"
           loading="eager"
         />
         <MediaQuery maxWidth={500}>{this.renderBtnGroup()}</MediaQuery>
       </div>
-    )
+    );
   }
 }

@@ -1,35 +1,35 @@
-import React from "react"
-import i18n from "../i18n/ru.json"
-import "../css/tags-selector.css"
+import React from "react";
+import i18n from "../assets/i18n/locale/ru.json";
+import "../css/tags-selector.css";
 
 type ToggleButtonData = {
-  name: string
-  checked: boolean
-  label: string
-}
+  name: string;
+  checked: boolean;
+  label: string;
+};
 
 interface IProps {
-  onUpdate?: (selTags: string[]) => void
-  onExit?: () => void
-  header: string
-  tags: string[]
-  selTags: string[]
+  onUpdate?: (selTags: string[]) => void;
+  onExit?: () => void;
+  header: string;
+  tags: string[];
+  selTags: string[];
 }
 
 interface IState {
-  btnData: ToggleButtonData[]
+  btnData: ToggleButtonData[];
 }
 
 export default class TagsSelector extends React.Component<IProps, IState> {
   constructor(props: IProps) {
-    super(props)
+    super(props);
     this.state = {
       btnData: this.mapTagsOnBtns(this.props.tags, this.props.selTags),
-    }
+    };
   }
 
   componentDidMount() {
-    document?.querySelector("body")?.scrollTo(0, 0)
+    document?.querySelector("body")?.scrollTo(0, 0);
   }
 
   mapTagsOnBtns(tags: string[], selTags: string[]) {
@@ -42,7 +42,7 @@ export default class TagsSelector extends React.Component<IProps, IState> {
             label: i18n[tag as keyof typeof i18n],
           } as ToggleButtonData)
       )
-      .sort((a, b) => a.label.length - b.label.length)
+      .sort((a, b) => a.label.length - b.label.length);
   }
 
   renderBtns() {
@@ -53,21 +53,17 @@ export default class TagsSelector extends React.Component<IProps, IState> {
         type="button"
         onClick={this.onToggleBtnClick.bind(this, index)}
       >
-        <div
-          className={`toggle-btn-label ${btn.checked ? "checked-label" : ""}`}
-        >
-          {btn.label}
-        </div>
+        <div className={`toggle-btn-label ${btn.checked ? "checked-label" : ""}`}>{btn.label}</div>
       </button>
-    ))
+    ));
   }
 
   onToggleBtnClick(index: number) {
-    const btns = this.state.btnData
-    btns[index].checked = !btns[index].checked
-    this.setState({ btnData: btns })
+    const btns = this.state.btnData;
+    btns[index].checked = !btns[index].checked;
+    this.setState({ btnData: btns });
     if (this.props.onUpdate !== undefined) {
-      this.props.onUpdate(btns.filter(cb => cb.checked).map(cb => cb.name))
+      this.props.onUpdate(btns.filter(cb => cb.checked).map(cb => cb.name));
     }
   }
 
@@ -82,6 +78,6 @@ export default class TagsSelector extends React.Component<IProps, IState> {
         </button>
       </div>
       //   </div>
-    )
+    );
   }
 }

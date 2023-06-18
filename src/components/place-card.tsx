@@ -1,31 +1,31 @@
-import React from "react"
-import { PlaceData } from "./app"
-import i18n from "../i18n/ru.json"
-import "../css/place-card.css"
+import React from "react";
+import { PlaceData } from "./app";
+import i18n from "../assets/i18n/locale/ru.json";
+import "../css/place-card.css";
 
 interface IProps {
-  label: string
-  score: number
-  placeData: PlaceData
-  showInfo: boolean
-  checked: boolean
-  debug?: boolean
-  style?: React.CSSProperties
-  onInfoClick?: (e: any) => void
-  onClick?: (checked: boolean, e: any) => void
+  label: string;
+  score: number;
+  placeData: PlaceData;
+  showInfo: boolean;
+  checked: boolean;
+  debug?: boolean;
+  style?: React.CSSProperties;
+  onInfoClick?: (e: any) => void;
+  onClick?: (checked: boolean, e: any) => void;
 }
 
 export default class PlaceCard extends React.Component<IProps> {
   constructor(props: IProps) {
-    super(props)
+    super(props);
     this.state = {
       checked: props.checked,
-    }
+    };
   }
 
   onClick(e: any) {
     if (this.props.onClick !== undefined) {
-      this.props.onClick(!this.props.checked, e)
+      this.props.onClick(!this.props.checked, e);
     }
   }
 
@@ -33,19 +33,11 @@ export default class PlaceCard extends React.Component<IProps> {
     return (
       <div
         style={this.props.style}
-        className={`place-card ${
-          this.props.checked ? "place-checked" : "card-grad"
-        }`}
+        className={`place-card ${this.props.checked ? "place-checked" : "card-grad"}`}
         onClick={this.onClick.bind(this)}
       >
-        {this.props.checked && (
-          <img className="selected-icon" src="selected_icon.svg" />
-        )}
-        <img
-          className="info-icon"
-          src="info_icon.svg"
-          onClick={this.props.onInfoClick}
-        />
+        {this.props.checked && <img className="selected-icon" src="selected_icon.svg" />}
+        <img className="info-icon" src="info_icon.svg" onClick={this.props.onInfoClick} />
         <div className="card-img">
           <img src={this.props.placeData.photo} alt={this.props.label} />
         </div>
@@ -69,15 +61,11 @@ export default class PlaceCard extends React.Component<IProps> {
         >
           <div>
             <h1>{i18n["info_header"]}</h1>
-            <img
-              className="close-icon"
-              src="close_icon.svg"
-              onClick={this.props.onInfoClick}
-            />
+            <img className="close-icon" src="close_icon.svg" onClick={this.props.onInfoClick} />
           </div>
           <p>{this.props.placeData.description}</p>
         </div>
       </div>
-    )
+    );
   }
 }

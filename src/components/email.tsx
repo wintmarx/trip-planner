@@ -1,57 +1,57 @@
-import React from "react"
-import { StaticImage } from "gatsby-plugin-image"
-import i18n from "../i18n/ru.json"
-import "../css/email.css"
-import MediaQuery from "react-responsive"
+import React from "react";
+import { StaticImage } from "gatsby-plugin-image";
+import i18n from "../assets/i18n/locale/ru.json";
+import "../css/email.css";
+import MediaQuery from "react-responsive";
 
 interface IProps {
-  onEnterValidEmail?: (email: string) => void
-  onSend?: (email: string) => void
-  error?: boolean
+  onEnterValidEmail?: (email: string) => void;
+  onSend?: (email: string) => void;
+  error?: boolean;
 }
 
 interface IState {
-  email: string
-  emailValid: boolean
+  email: string;
+  emailValid: boolean;
 }
 
 export default class Email extends React.Component<IProps, IState> {
   constructor(props: IProps) {
-    super(props)
-    this.state = { email: "", emailValid: true }
+    super(props);
+    this.state = { email: "", emailValid: true };
 
-    this.onInput = this.onInput.bind(this)
-    this.isInputError = this.isInputError.bind(this)
-    this.getInputErrorText = this.getInputErrorText.bind(this)
-    this.isButtonDisabled = this.isButtonDisabled.bind(this)
-    this.renderButton = this.renderButton.bind(this)
-    this.renderInput = this.renderInput.bind(this)
-    this.renderApiError = this.renderApiError.bind(this)
+    this.onInput = this.onInput.bind(this);
+    this.isInputError = this.isInputError.bind(this);
+    this.getInputErrorText = this.getInputErrorText.bind(this);
+    this.isButtonDisabled = this.isButtonDisabled.bind(this);
+    this.renderButton = this.renderButton.bind(this);
+    this.renderInput = this.renderInput.bind(this);
+    this.renderApiError = this.renderApiError.bind(this);
   }
 
   validateEmail(email: string) {
     const re =
-      /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
-    return re.test(String(email).toLowerCase())
+      /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+    return re.test(String(email).toLowerCase());
   }
 
   onInput(email: string) {
     if (this.props.onEnterValidEmail !== undefined) {
-      this.props.onEnterValidEmail(email)
+      this.props.onEnterValidEmail(email);
     }
-    this.setState({ email: email })
+    this.setState({ email: email });
   }
 
   isInputError() {
-    return this.state.email.length > 0 && !this.validateEmail(this.state.email)
+    return this.state.email.length > 0 && !this.validateEmail(this.state.email);
   }
 
   getInputErrorText() {
-    return this.isInputError() ? i18n["incorrect_email"] : ""
+    return this.isInputError() ? i18n["incorrect_email"] : "";
   }
 
   isButtonDisabled() {
-    return !this.validateEmail(this.state.email)
+    return !this.validateEmail(this.state.email);
   }
 
   renderButton() {
@@ -63,30 +63,22 @@ export default class Email extends React.Component<IProps, IState> {
       >
         <span>{i18n["email_send_btn"]}</span>
       </button>
-    )
+    );
   }
 
   renderInput() {
     return (
       <input
-        className={`email-input ${
-          this.isInputError() ? "email-input-error" : ""
-        }`}
+        className={`email-input ${this.isInputError() ? "email-input-error" : ""}`}
         placeholder="e-mail"
         type="email"
         onChange={e => this.onInput(e.target.value)}
       />
-    )
+    );
   }
 
   renderApiError() {
-    return (
-      <>
-        {this.props.error && (
-          <p className="api-error-text">{i18n["api_error"]}</p>
-        )}
-      </>
-    )
+    return <>{this.props.error && <p className="api-error-text">{i18n["api_error"]}</p>}</>;
   }
 
   render() {
@@ -107,13 +99,13 @@ export default class Email extends React.Component<IProps, IState> {
         </div>
         <StaticImage
           className="email-img"
-          src="../images/svg/final.svg"
+          src="../assets/images/svg/final.svg"
           alt=""
           placeholder="none"
           loading="eager"
         />
         <MediaQuery maxWidth={500}>{this.renderButton()}</MediaQuery>
       </div>
-    )
+    );
   }
 }
