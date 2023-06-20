@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import TagsSelector from "./tags-selector";
 import Final from "./final";
 import Greetings from "./greetings";
@@ -9,7 +9,7 @@ import ym from "react-yandex-metrika";
 import { Api, TripRequestPlace } from "../api";
 import TabSelector, { Tab } from "./tab-selector";
 import CircleLoader from "react-spinners/CircleLoader";
-import Email from "./email";
+import EmailPage from "./email";
 import SNServices, { SNSProfiles } from "./sns_services/sn_services";
 import PrivacyPolicy from "./privacy_policy/privacy_policy";
 import PrivacyPolicyPopup from "./privacy_policy_popup/privacy_policy_popup";
@@ -48,13 +48,13 @@ export type PlaceData = {
   yandexLink: string;
 };
 
-interface IProps {
+interface AppProps {
   places: PlaceData[];
   tags: Tags;
   debug?: boolean;
 }
 
-interface IState {
+interface AppState {
   page: Page;
   selTags: Tags;
   selPlaces: string[];
@@ -66,56 +66,38 @@ interface IState {
 const STORAGE_NAME = "trip-planner";
 const PRIVACY_STORAGE_NAME = `${STORAGE_NAME}-privacy`;
 
-export class App extends React.Component<IProps, IState> {
-  defaultState = {
-    page: Page.Greetings,
-    selTags: { places: [], themes: [] },
-    selPlaces: [],
-    showLoading: false,
-    apiError: false,
-    isPolicyAccepted: false,
-  };
-  api = new Api();
-  previousPage: Page = this.defaultState.page;
-  constructor(props: IProps) {
-    super(props);
-    this.onGreetingsNext = this.onGreetingsNext.bind(this);
-    this.onPlaceTagsSelected = this.onPlaceTagsSelected.bind(this);
-    this.onPlaceTagsClosed = this.onPlaceTagsClosed.bind(this);
-    this.onThemeTagsSelected = this.onThemeTagsSelected.bind(this);
-    this.onThemeTagsClosed = this.onThemeTagsClosed.bind(this);
-    this.onPlacesSelected = this.onPlacesSelected.bind(this);
-    this.onPlacesClosed = this.onPlacesClosed.bind(this);
-    this.onEnterValidEmail = this.onEnterValidEmail.bind(this);
-    this.onSend = this.onSend.bind(this);
-    this.clearState = this.clearState.bind(this);
-    this.isTabsVisible = this.isTabsVisible.bind(this);
-    this.renderTabs = this.renderTabs.bind(this);
-    this.renderLoading = this.renderLoading.bind(this);
-    this.onFinalClosed = this.onFinalClosed.bind(this);
-    this.onEmailMiss = this.onEmailMiss.bind(this);
-    this.onSNSExit = this.onSNSExit.bind(this);
-    this.onSNSSkip = this.onSNSSkip.bind(this);
-    this.onPrivacyPolicyExit = this.onPrivacyPolicyExit.bind(this);
-    this.onPrivacyPolicyAccept = this.onPrivacyPolicyAccept.bind(this);
-    this.onPrivacyPolicyMore = this.onPrivacyPolicyMore.bind(this);
-    this.onTabChanged = this.onTabChanged.bind(this);
-    this.state = {
-      page: Page.Loading,
-      selTags: this.defaultState.selTags,
-      selPlaces: this.defaultState.selPlaces,
-      showLoading: this.defaultState.showLoading,
-      apiError: this.defaultState.apiError,
-      isPolicyAccepted: false,
-    };
-    ReactGA.initialize(process.env.GATSBY_GA_ID || "");
-  }
+const defaultState: AppState = {
+  page: Page.Greetings,
+  selTags: { places: [], themes: [] },
+  selPlaces: [],
+  showLoading: false,
+  apiError: false,
+  isPolicyAccepted: false,
+};
 
-  clearState() {
-    const state = this.defaultState;
-    state.isPolicyAccepted = this.state.isPolicyAccepted;
-    this.setState(state);
+const api = new Api();
+let previousPage: Page = defaultState.page;
+
+let isInit = false;
+
+export function App(props: AppProps) {
+  const [curPage, setPage] = useState(Page.Loading);
+  const [selTags, setSelTags] = useState(defaultState.selTags);
+  const [selPlaces, setSelPlaces] = useState(defaultState.selPlaces);
+  const [apiError, setApiError] = useState(defaultState.apiError);
+  const [isPolicyAccepted, acceptPolicy] = useState(false);
+  const [isShowLoading, enableLoading] = useState(false);
+
+  function clearState() {
+    setPage(defaultState.page);
+    setSelTags(defaultState.selTags);
+    setSelPlaces(defaultState.selPlaces);
+    setApiError(defaultState.apiError);
+    enableLoading(defaultState.showLoading);
+    acceptPolicy(isPolicyAccepted);
+
     localStorage.removeItem(STORAGE_NAME);
+
     ym("reachGoal", "greetings");
     ReactGA.send({ hitType: "pageview", title: Page[Page.Greetings] });
     ReactGA.event({
@@ -124,19 +106,25 @@ export class App extends React.Component<IProps, IState> {
     });
   }
 
-  componentDidMount() {
-    const data_str = localStorage.getItem(STORAGE_NAME);
-    const isPolicyAccepted = localStorage.getItem(PRIVACY_STORAGE_NAME);
-    if (!data_str) {
-      const state = this.defaultState;
-      state.isPolicyAccepted = !!isPolicyAccepted;
-      this.setState(state);
+  useEffect(() => {
+    if (isInit) {
+      return;
+    }
+    isInit = true;
+
+    ReactGA.initialize(process.env.GATSBY_GA_ID || "");
+    const dataStr = localStorage.getItem(STORAGE_NAME);
+    const wasPolicyAccepted = localStorage.getItem(PRIVACY_STORAGE_NAME);
+    if (!dataStr) {
+      acceptPolicy(!!wasPolicyAccepted);
+      setPage(Page.Greetings);
+
       ym("reachGoal", "greetings");
       ReactGA.send({ hitType: "pageview", title: Page[Page.Greetings] });
       return;
     }
     try {
-      const data = JSON.parse(data_str);
+      const data = JSON.parse(dataStr);
       const restore = sessionStorage.getItem(STORAGE_NAME);
       const millisInHr = 1000 * 60 * 60;
       const isExpired = !data.date || Date.now() - data.date > millisInHr * 5;
@@ -146,69 +134,80 @@ export class App extends React.Component<IProps, IState> {
           hitType: "event",
           eventCategory: "state",
           eventAction: "expired_state",
-          title: Page[this.state.page],
+          title: Page[curPage],
         });
       }
+
       if (isExpired || (!restore && !window.confirm(i18n["restore_session"]))) {
         throw new Error();
       }
-      data.state.apiError = this.defaultState.apiError;
-      data.state.isPolicyAccepted = !!isPolicyAccepted;
-      this.setState(data.state);
+
+      setApiError(defaultState.apiError);
+      acceptPolicy(!!wasPolicyAccepted);
+      setPage(data.page);
+      setSelPlaces(data.selPlaces);
+      setSelTags(data.selTags);
+
       ym("reachGoal", "restore");
       ReactGA.send({
         hitType: "event",
         eventCategory: "state",
         eventAction: "restore_state",
-        title: Page[this.state.page],
+        title: Page[curPage],
       });
     } catch (error) {
-      this.clearState();
+      clearState();
     }
-  }
+  }, []);
 
-  componentDidUpdate() {
-    if (this.state.isPolicyAccepted) {
+  useEffect(() => {
+    if (isPolicyAccepted) {
       localStorage.setItem(PRIVACY_STORAGE_NAME, "1");
     }
-    if (this.state.page == Page.Greetings || this.state.page == Page.PrivacyPolicy || this.state.page == Page.Loading) {
+    if (curPage == Page.Greetings || curPage == Page.PrivacyPolicy || curPage == Page.Loading) {
       return;
     }
-    localStorage.setItem(STORAGE_NAME, JSON.stringify({ date: Date.now(), state: this.state }));
+    localStorage.setItem(
+      STORAGE_NAME,
+      JSON.stringify({
+        date: Date.now(),
+        page: curPage,
+        selTags: selTags,
+        selPlaces: selPlaces,
+      })
+    );
     sessionStorage.setItem(STORAGE_NAME, "restore");
     ReactGA.send({
       hitType: "event",
       eventCategory: "state",
       eventAction: "save_state",
-      title: Page[this.state.page],
+      title: Page[curPage],
     });
-  }
+  }, [isPolicyAccepted, curPage, selTags, selPlaces]);
 
-  onGreetingsNext() {
-    this.setState({ page: Page.SNServices });
+  function onGreetingsNext() {
+    setPage(Page.SNServices);
     ReactGA.send({ hitType: "pageview", title: Page[Page.SNServices] });
   }
 
-  onPlaceTagsSelected(selTags: string[]) {
-    this.setState({
-      selTags: { places: selTags, themes: this.state.selTags.themes },
-    });
+  function onPlaceTagsSelected(newPlaceTags: string[]) {
+    const updatedTags: Tags = { places: newPlaceTags, themes: selTags.themes };
+    setSelTags(updatedTags);
     ReactGA.event({
       category: "tags",
       action: "select_place_tags",
-      label: selTags.toString(),
+      label: updatedTags.toString(),
     });
   }
 
-  onPlaceTagsClosed() {
+  function onPlaceTagsClosed() {
+    setPage(Page.ThemeTags);
     ReactGA.send({ hitType: "pageview", title: Page[Page.ThemeTags] });
-    this.setState({ page: Page.ThemeTags });
   }
 
-  onThemeTagsSelected(selTags: string[]) {
-    this.setState({
-      selTags: { places: this.state.selTags.places, themes: selTags },
-    });
+  function onThemeTagsSelected(newThemeTags: string[]) {
+    const updatedTags: Tags = { places: selTags.places, themes: newThemeTags };
+    setSelTags(updatedTags);
     ReactGA.event({
       category: "tags",
       action: "select_theme_tags",
@@ -216,58 +215,41 @@ export class App extends React.Component<IProps, IState> {
     });
   }
 
-  onThemeTagsClosed() {
-    this.setState({ page: Page.Places });
+  function onThemeTagsClosed() {
+    setPage(Page.Places);
     ReactGA.send({ hitType: "pageview", title: Page[Page.Places] });
   }
 
-  onPlacesSelected(selPlaces: string[]) {
-    this.setState({ selPlaces: selPlaces });
-    ym("reachGoal", "places", { selPlaces: selPlaces });
+  function onPlacesSelected(newSelPlaces: string[]) {
+    setSelPlaces(newSelPlaces);
+    ym("reachGoal", "places", { selPlaces: newSelPlaces });
     ReactGA.event({
       category: "places",
       action: "select_places",
-      label: selPlaces.toString(),
+      label: newSelPlaces.toString(),
     });
   }
 
-  onPlacesClosed() {
-    this.setState({ page: Page.Email });
+  function onPlacesClosed() {
+    setPage(Page.Email);
     ReactGA.send({ hitType: "pageview", title: Page[Page.Email] });
   }
 
-  onEnterValidEmail(email: string) {
+  function onEnterValidEmail(email: string) {
     ym("reachGoal", "valid-email");
     ReactGA.event({
       category: "email",
       action: "valid_email",
-      label: email,
     });
   }
 
-  onSend(email: string) {
-    ym("reachGoal", "route", {
-      email: email,
-      selTags: this.state.selTags,
-      places: this.state.selPlaces,
-    });
-    ReactGA.event(
-      {
-        category: "api",
-        action: "request_trip",
-      },
-      {
-        email: email,
-        selected_places: this.state.selPlaces.toString(),
-        selected_theme_tags: this.state.selTags.themes.toString(),
-        selected_place_tags: this.state.selTags.places.toString(),
-      }
-    );
-    this.setState({ showLoading: true });
-    const requestPlaces = this.props.places
-      .filter(place => this.state.selPlaces.includes(place.id))
+  function onSend(email: string) {
+    enableLoading(true);
+    setApiError(false);
+    const requestPlaces = props.places
+      .filter((place) => selPlaces.includes(place.id))
       .map(
-        place =>
+        (place) =>
           ({
             desc: place.description,
             title: place.name,
@@ -279,25 +261,41 @@ export class App extends React.Component<IProps, IState> {
           } as TripRequestPlace)
       );
 
-    this.api
+    api
       .requestTrip({ email: email, places: requestPlaces })
-      .then(res => {
-        this.setState({ page: Page.Final, apiError: false });
+      .then((res) => {
+        setPage(Page.Final);
       })
-      .catch(err => {
-        this.setState({ apiError: true });
+      .catch((err) => {
+        setApiError(true);
       })
       .finally(() => {
-        this.setState({ showLoading: false });
+        enableLoading(false);
       });
+
+    ym("reachGoal", "route", {
+      selTags: selTags,
+      places: selPlaces,
+    });
+    ReactGA.event(
+      {
+        category: "api",
+        action: "request_trip",
+      },
+      {
+        selected_places: selPlaces.toString(),
+        selected_theme_tags: selTags.themes.toString(),
+        selected_place_tags: selTags.places.toString(),
+      }
+    );
   }
 
-  onFinalClosed() {
-    this.clearState();
+  function onFinalClosed() {
+    clearState();
   }
 
-  onEmailMiss() {
-    this.setState({ page: Page.Email });
+  function onEmailMiss() {
+    setPage(Page.Email);
     ReactGA.send({ hitType: "pageview", title: Page[Page.Email] });
     ReactGA.event({
       category: "email",
@@ -305,8 +303,8 @@ export class App extends React.Component<IProps, IState> {
     });
   }
 
-  onSNSExit(profiles: SNSProfiles) {
-    this.setState({ page: Page.PlaceTags });
+  function onSNSExit(profiles: SNSProfiles) {
+    setPage(Page.PlaceTags);
     ReactGA.send({ hitType: "pageview", title: Page[Page.PlaceTags] });
     ReactGA.event("sns", {
       vk: profiles.vk,
@@ -315,8 +313,8 @@ export class App extends React.Component<IProps, IState> {
     });
   }
 
-  onSNSSkip() {
-    this.setState({ page: Page.PlaceTags });
+  function onSNSSkip() {
+    setPage(Page.PlaceTags);
     ReactGA.send({ hitType: "pageview", title: Page[Page.PlaceTags] });
     ReactGA.event({
       category: "sns",
@@ -324,31 +322,32 @@ export class App extends React.Component<IProps, IState> {
     });
   }
 
-  onPrivacyPolicyExit() {
-    this.setState({ page: this.previousPage, isPolicyAccepted: true });
-    ReactGA.send({ hitType: "pageview", title: Page[this.previousPage] });
+  function onPrivacyPolicyExit() {
+    setPage(previousPage);
+    acceptPolicy(true);
+    ReactGA.send({ hitType: "pageview", title: Page[previousPage] });
     ReactGA.event({
       category: "privacy_policy",
       action: "accept_privacy_policy",
     });
   }
 
-  onPrivacyPolicyAccept() {
-    this.setState({ isPolicyAccepted: true });
+  function onPrivacyPolicyAccept() {
+    acceptPolicy(true);
     ReactGA.event({
       category: "privacy_policy",
       action: "accept_privacy_policy",
     });
   }
 
-  onPrivacyPolicyMore() {
-    this.previousPage = this.state.page;
-    this.setState({ page: Page.PrivacyPolicy });
+  function onPrivacyPolicyMore() {
+    previousPage = curPage;
+    setPage(Page.PrivacyPolicy);
     ReactGA.send({ hitType: "pageview", title: Page[Page.PrivacyPolicy] });
   }
 
-  onTabChanged(page: Page) {
-    this.setState({ page: page });
+  function onTabChanged(page: Page) {
+    setPage(page);
     ReactGA.send({ hitType: "pageview", title: Page[page] });
     ReactGA.event({
       category: "tabs",
@@ -357,23 +356,23 @@ export class App extends React.Component<IProps, IState> {
     });
   }
 
-  isTabsVisible() {
-    return this.state.page == Page.PlaceTags || this.state.page == Page.ThemeTags || this.state.page == Page.Places;
+  function isTabsVisible() {
+    return curPage == Page.PlaceTags || curPage == Page.ThemeTags || curPage == Page.Places;
   }
 
-  renderTabs() {
+  function renderTabs() {
     const tabs: Tab[] = [
       { title: i18n["objects"], value: Page.PlaceTags },
       { title: i18n["themes"], value: Page.ThemeTags },
       { title: i18n["route"], value: Page.Places },
     ];
-    return <TabSelector tabs={tabs} value={this.state.page} onChange={(p: number) => this.onTabChanged(p as Page)} />;
+    return <TabSelector tabs={tabs} value={curPage} onChange={(p: number) => onTabChanged(p as Page)} />;
   }
 
-  renderLoading() {
+  function renderLoading() {
     return (
       <>
-        {this.state.showLoading && (
+        {isShowLoading && (
           <div className="loading">
             <div className="loading-bg" />
             <CircleLoader
@@ -394,58 +393,54 @@ export class App extends React.Component<IProps, IState> {
     );
   }
 
-  render() {
-    return (
-      <Layout
-        headerCb={() => {
-          this.clearState();
-        }}
-      >
-        {this.state.page == Page.Greetings && <Greetings onExit={this.onGreetingsNext} />}
+  return (
+    <Layout
+      headerCb={() => {
+        clearState();
+      }}
+    >
+      {curPage == Page.Greetings && <Greetings onExit={onGreetingsNext} />}
 
-        {this.state.page == Page.SNServices && <SNServices onExit={this.onSNSExit} onSkip={this.onSNSSkip} />}
+      {curPage == Page.SNServices && <SNServices onExit={onSNSExit} onSkip={onSNSSkip} />}
 
-        {this.state.page == Page.PrivacyPolicy && <PrivacyPolicy onExit={this.onPrivacyPolicyExit} />}
+      {curPage == Page.PrivacyPolicy && <PrivacyPolicy onExit={onPrivacyPolicyExit} />}
 
-        {this.isTabsVisible() && this.renderTabs()}
-        {this.state.page == Page.PlaceTags && (
-          <TagsSelector
-            tags={this.props.tags.places}
-            selTags={this.state.selTags.places}
-            onUpdate={this.onPlaceTagsSelected}
-            onExit={this.onPlaceTagsClosed}
-            header={i18n["select_place_tags"]}
-          />
-        )}
-        {this.state.page == Page.ThemeTags && (
-          <TagsSelector
-            tags={this.props.tags.themes}
-            selTags={this.state.selTags.themes}
-            onUpdate={this.onThemeTagsSelected}
-            onExit={this.onThemeTagsClosed}
-            header={i18n["select_theme_tags"]}
-          />
-        )}
-        {this.state.page == Page.Places && (
-          <PlaceSelector
-            debug={this.props.debug !== undefined && this.props.debug}
-            selPlaces={this.state.selPlaces}
-            selTags={this.state.selTags}
-            places={this.props.places}
-            onUpdate={this.onPlacesSelected}
-            onExit={this.onPlacesClosed}
-          />
-        )}
-        {this.state.page == Page.Email && (
-          <Email onEnterValidEmail={this.onEnterValidEmail} onSend={this.onSend} error={this.state.apiError} />
-        )}
-        {this.state.page == Page.Final && <Final onMiss={this.onEmailMiss} onExit={this.onFinalClosed} />}
-        {!this.state.isPolicyAccepted && this.state.page != Page.PrivacyPolicy && (
-          <PrivacyPolicyPopup onExit={this.onPrivacyPolicyAccept} onInfo={this.onPrivacyPolicyMore} />
-        )}
+      {isTabsVisible() && renderTabs()}
+      {curPage == Page.PlaceTags && (
+        <TagsSelector
+          tags={props.tags.places}
+          selTags={selTags.places}
+          onUpdate={onPlaceTagsSelected}
+          onExit={onPlaceTagsClosed}
+          header={i18n["select_place_tags"]}
+        />
+      )}
+      {curPage == Page.ThemeTags && (
+        <TagsSelector
+          tags={props.tags.themes}
+          selTags={selTags.themes}
+          onUpdate={onThemeTagsSelected}
+          onExit={onThemeTagsClosed}
+          header={i18n["select_theme_tags"]}
+        />
+      )}
+      {curPage == Page.Places && (
+        <PlaceSelector
+          debug={props.debug !== undefined && props.debug}
+          selPlaces={selPlaces}
+          selTags={selTags}
+          places={props.places}
+          onUpdate={onPlacesSelected}
+          onExit={onPlacesClosed}
+        />
+      )}
+      {curPage == Page.Email && <EmailPage onEnterValidEmail={onEnterValidEmail} onSend={onSend} error={apiError} />}
+      {curPage == Page.Final && <Final onMiss={onEmailMiss} onExit={onFinalClosed} />}
+      {!isPolicyAccepted && curPage != Page.PrivacyPolicy && (
+        <PrivacyPolicyPopup onExit={onPrivacyPolicyAccept} onInfo={onPrivacyPolicyMore} />
+      )}
 
-        {this.renderLoading()}
-      </Layout>
-    );
-  }
+      {renderLoading()}
+    </Layout>
+  );
 }

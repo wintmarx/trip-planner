@@ -79,7 +79,7 @@
   z-index: 1;
 }
 
-.api-error-text {
+.input-error-text {
   position: absolute;
   color: tomato;
   font-family: Gilroy;
@@ -87,7 +87,15 @@
   bottom: -1rem;
 }
 
-@media screen and (min-width: 500px) {
+.email-error-text {
+  left: 1.5rem;
+}
+
+.email-input-group:focus-within .email-error-text {
+  visibility: hidden;
+}
+
+@media screen and (min-width: 700px) {
   .email-container {
     top: 35vh;
     position: relative;
@@ -95,13 +103,14 @@
   }
 }
 
-@media screen and (max-width: 500px) {
-  .api-error-text {
+@media screen and (max-width: 700px) {
+  .input-error-text {
     position: relative;
     width: 100%;
     margin: 0rem;
     text-align: center;
     bottom: 0;
+    left: 0;
   }
 
   .email-header {

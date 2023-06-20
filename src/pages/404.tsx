@@ -1,11 +1,10 @@
-import { PageProps } from "gatsby";
 import React, { useEffect } from "react";
 import Layout from "../components/layout";
 
-const Error404Page: React.FC<PageProps> = () => {
+export default function Error404Page() {
   useEffect(() => {
     document.title = "Trip Planner";
-  }, []);
+  });
 
   return (
     <Layout
@@ -16,6 +15,4 @@ const Error404Page: React.FC<PageProps> = () => {
       <h1>404</h1>
     </Layout>
   );
-};
-
-export default Error404Page;
+}

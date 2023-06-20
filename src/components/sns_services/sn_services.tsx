@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import i18n from "../../assets/i18n/locale/ru.json";
 import "./sn_services.css";
 import VKLogo from "../../assets/images/svg/vk_logo.svg";
@@ -10,115 +10,85 @@ type SNSProfileState = {
   isValid: boolean;
 };
 
+type SetProfileStateCb = React.Dispatch<React.SetStateAction<SNSProfileState>>;
+
 export type SNSProfiles = {
   vk: string;
   fb: string;
   inst: string;
 };
 
-interface IProps {
+interface SNServicesProps {
   onExit?: (profiles: SNSProfiles) => void;
   onSkip?: () => void;
 }
 
-interface IState {
-  vk: SNSProfileState;
-  fb: SNSProfileState;
-  inst: SNSProfileState;
+function isInputValid(profile: string) {
+  // const re = /^([A-Za-z0-9-_\.]+)$/
+  // return profile.length == 0 || re.test(profile)
+  return true;
 }
 
-export default class SNServices extends React.Component<IProps, IState> {
-  constructor(props: IProps) {
-    super(props);
-    this.renderInput = this.renderInput.bind(this);
-    this.onVKChange = this.onVKChange.bind(this);
-    this.onInstChange = this.onInstChange.bind(this);
-    this.onFBChange = this.onFBChange.bind(this);
-    this.onExit = this.onExit.bind(this);
-    this.isButtonDisabled = this.isButtonDisabled.bind(this);
+function onChangeInput(newValue: string, setState: SetProfileStateCb) {
+  setState({ profile: newValue, isValid: isInputValid(newValue) });
+}
 
-    this.state = {
-      vk: { profile: "", isValid: true },
-      fb: { profile: "", isValid: true },
-      inst: { profile: "", isValid: true },
-    };
-  }
+function renderInput(inputName: string, isValid: boolean, setState: SetProfileStateCb) {
+  return (
+    <input
+      className={`sns-input ${!isValid ? "sns-input-error" : ""}`}
+      placeholder={inputName}
+      type="url"
+      onChange={(e) => onChangeInput(e.target.value, setState)}
+    />
+  );
+}
 
-  componentDidMount() {
+export default function SNServices(props: SNServicesProps) {
+  const defaultState: SNSProfileState = { profile: "", isValid: true };
+
+  const [vkState, setVkState] = useState(defaultState);
+  const [fbState, setFbState] = useState(defaultState);
+  const [instState, setInstState] = useState(defaultState);
+
+  useEffect(() => {
     document?.querySelector("body")?.scrollTo(0, 0);
+  }, []);
+
+  function isButtonDisabled() {
+    return !fbState.isValid || !vkState.isValid || !instState.isValid;
   }
 
-  isInputValid(profile: string) {
-    // const re = /^([A-Za-z0-9-_\.]+)$/
-    // return profile.length == 0 || re.test(profile)
-    return true;
-  }
-
-  onVKChange(profile: string) {
-    this.setState({
-      vk: { profile: profile, isValid: this.isInputValid(profile) },
-    });
-  }
-
-  onInstChange(profile: string) {
-    this.setState({
-      inst: { profile: profile, isValid: this.isInputValid(profile) },
-    });
-  }
-
-  onFBChange(profile: string) {
-    this.setState({
-      fb: { profile: profile, isValid: this.isInputValid(profile) },
-    });
-  }
-
-  isButtonDisabled() {
-    return !this.state.fb.isValid || !this.state.vk.isValid || !this.state.inst.isValid;
-  }
-
-  onExit() {
+  function onExit() {
     const profiles: SNSProfiles = {
-      vk: this.state.vk.isValid ? this.state.vk.profile : "",
-      fb: this.state.fb.isValid ? this.state.fb.profile : "",
-      inst: this.state.inst.isValid ? this.state.inst.profile : "",
+      vk: vkState.isValid ? vkState.profile : "",
+      fb: fbState.isValid ? fbState.profile : "",
+      inst: instState.isValid ? instState.profile : "",
     };
 
-    this.props.onExit?.call(this, profiles);
+    props.onExit?.(profiles);
   }
 
-  renderInput(name: string, onChange: (profile: string) => void, isValid: boolean) {
-    return (
-      <input
-        className={`sns-input ${!isValid ? "sns-input-error" : ""}`}
-        placeholder={name}
-        type="url"
-        onChange={e => onChange(e.target.value)}
-      />
-    );
-  }
-
-  render() {
-    return (
-      <>
-        <h1 className="sns-header">{i18n["sns_header"]}</h1>
-        <p className="sns-desc">{i18n["sns_desc"]}</p>
-        <div className="sns-container">
-          <VKLogo className="sns-icon" />
-          {this.renderInput(i18n["vk"], this.onVKChange, this.state.vk.isValid)}
-          <InstagramLogo className="sns-icon" />
-          {this.renderInput(i18n["instagram"], this.onInstChange, this.state.inst.isValid)}
-          <FacebookLogo className="sns-icon" />
-          {this.renderInput(i18n["facebook"], this.onFBChange, this.state.fb.isValid)}
-        </div>
-        <div className="sns-btn-container">
-          <button className="sns-skip-btn" onClick={this.props.onSkip}>
-            <span>{i18n["skip"]}</span>
-          </button>
-          <button className="sns-btn" onClick={this.onExit} disabled={this.isButtonDisabled()}>
-            <span>{i18n["next_page"]} →</span>
-          </button>
-        </div>
-      </>
-    );
-  }
+  return (
+    <>
+      <h1 className="sns-header">{i18n["sns_header"]}</h1>
+      <p className="sns-desc">{i18n["sns_desc"]}</p>
+      <div className="sns-container">
+        <VKLogo className="sns-icon" />
+        {renderInput(i18n["vk"], vkState.isValid, setVkState)}
+        <InstagramLogo className="sns-icon" />
+        {renderInput(i18n["instagram"], instState.isValid, setInstState)}
+        <FacebookLogo className="sns-icon" />
+        {renderInput(i18n["facebook"], fbState.isValid, setFbState)}
+      </div>
+      <div className="sns-btn-container">
+        <button className="sns-skip-btn" onClick={props.onSkip}>
+          <span>{i18n["skip"]}</span>
+        </button>
+        <button className="sns-btn" onClick={onExit} disabled={isButtonDisabled()}>
+          <span>{i18n["next_page"]} →</span>
+        </button>
+      </div>
+    </>
+  );
 }

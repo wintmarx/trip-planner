@@ -1,4 +1,4 @@
-import React, { PropsWithChildren } from "react";
+import React, { ReactNode } from "react";
 import Header from "./header";
 import "../css/layout.css";
 import { YMInitializer } from "react-yandex-metrika";
@@ -7,9 +7,10 @@ type HeaderCb = () => void;
 
 interface LayoutProps {
   headerCb: HeaderCb;
+  children?: ReactNode | undefined;
 }
 
-const Layout: React.FC<PropsWithChildren<LayoutProps>> = ({ children, headerCb }) => {
+export default function Layout(props: LayoutProps) {
   return (
     <div className="page">
       <YMInitializer
@@ -17,10 +18,8 @@ const Layout: React.FC<PropsWithChildren<LayoutProps>> = ({ children, headerCb }
         options={{ webvisor: true }}
         version="2"
       />
-      <Header headerCb={headerCb} siteTitle={"Trip Planner"} />
-      <main className="content">{children}</main>
+      <Header headerCb={props.headerCb} siteTitle={"Trip Planner"} />
+      <main className="content">{props.children}</main>
     </div>
   );
-};
-
-export default Layout;
+}

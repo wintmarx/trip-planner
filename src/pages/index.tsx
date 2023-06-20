@@ -1,7 +1,7 @@
-import React, { useEffect } from "react";
-import { useLocation, Location, BrowserRouter, Routes, Route } from "react-router-dom";
+import React, { useEffect, useMemo } from "react";
+import { Location } from "react-router-dom";
 import { App, PlaceData } from "../components/app";
-import { StaticQuery, graphql } from "gatsby";
+import { graphql, useStaticQuery } from "gatsby";
 
 const CSV_ACTIVITIES_QUERY = graphql`
   query {
@@ -80,7 +80,7 @@ function getQueryVariable(variable: string, location: Location) {
   return false;
 }
 
-function convertActivityToPlaceData(activity: ActivityCSV, tags: Tags) {
+function convertActivityToPlaceData(tags: Tags, activity: ActivityCSV) {
   return {
     id: activity.photo,
     name: activity.name,
@@ -111,13 +111,18 @@ function parseTags(activitiesCSV: ActivityCSV[]) {
   } as Tags;
 }
 
-function renderApp(data: any) {
-  const activitiesCSV = data.allActivitiesCsv.nodes;
+export default function MainPage() {
+  const loadedCSVActivities = useStaticQuery(CSV_ACTIVITIES_QUERY);
+  const activitiesCSV = loadedCSVActivities.allActivitiesCsv.nodes;
   const tags = parseTags(activitiesCSV);
-  const places: PlaceData[] = activitiesCSV.map((activity: ActivityCSV) => convertActivityToPlaceData(activity, tags));
+  const places: PlaceData[] = useMemo(
+    () => activitiesCSV.map(convertActivityToPlaceData.bind(null, tags)),
+    [activitiesCSV, tags]
+  );
 
-  const location = useLocation();
-  const isDebug = typeof getQueryVariable("debug", location) == "string";
+  // const location = useLocation();
+  // const isDebug = typeof getQueryVariable("debug", location) == "string";
+  const isDebug = false;
 
   useEffect(() => {
     document.title = "Trip Planner";
@@ -125,13 +130,3 @@ function renderApp(data: any) {
 
   return <App debug={isDebug} places={places} tags={tags} />;
 }
-
-const IndexPage: React.FC = () => (
-  <BrowserRouter>
-    <Routes>
-      <Route path="/" element={<StaticQuery query={CSV_ACTIVITIES_QUERY} render={renderApp} />} />
-    </Routes>
-  </BrowserRouter>
-);
-
-export default IndexPage;

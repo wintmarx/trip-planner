@@ -1,13 +1,13 @@
-import React from "react";
-import { graphql, StaticQuery } from "gatsby";
+import React, { useEffect } from "react";
+import { graphql, useStaticQuery } from "gatsby";
 import i18n from "../../assets/i18n/locale/ru.json";
 import "./privacy_policy.css";
 
-interface IProps {
+interface PrivacyPolicyProps {
   onExit?: () => void;
 }
 
-const policyQuery = graphql`
+const POLICY_QUERY = graphql`
   query {
     markdownRemark(fileAbsolutePath: { regex: "/ru_privacy_policy/" }) {
       html
@@ -15,35 +15,20 @@ const policyQuery = graphql`
   }
 `;
 
-export default class PrivacyPolicy extends React.Component<IProps> {
-  constructor(props: IProps) {
-    super(props);
-  }
+export default function PrivacyPolicy(props: PrivacyPolicyProps) {
+  const loadedPolicy = useStaticQuery(POLICY_QUERY);
 
-  componentDidMount() {
+  useEffect(() => {
     document?.querySelector("body")?.scrollTo(0, 0);
-  }
+  }, []);
 
-  renderPolicy() {
-    return (
-      <StaticQuery
-        query={policyQuery}
-        render={data => (
-          <div className="policy-content" dangerouslySetInnerHTML={{ __html: data.markdownRemark.html }} />
-        )}
-      />
-    );
-  }
-
-  render() {
-    return (
-      <>
-        <h1 className="policy-header">{i18n["privacy_policy_header"]}</h1>
-        {this.renderPolicy()}
-        <button className="policy-btn" onClick={this.props.onExit}>
-          <span>{i18n["ok"]}</span>
-        </button>
-      </>
-    );
-  }
+  return (
+    <>
+      <h1 className="policy-header">{i18n["privacy_policy_header"]}</h1>
+      <div className="policy-content" dangerouslySetInnerHTML={{ __html: loadedPolicy.markdownRemark.html }} />
+      <button className="policy-btn" onClick={props.onExit}>
+        <span>{i18n["ok"]}</span>
+      </button>
+    </>
+  );
 }

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import i18n from "../assets/i18n/locale/ru.json";
 import "../css/tags-selector.css";
 
@@ -8,7 +8,7 @@ type ToggleButtonData = {
   label: string;
 };
 
-interface IProps {
+interface TagsSelectorProps {
   onUpdate?: (selTags: string[]) => void;
   onExit?: () => void;
   header: string;
@@ -16,68 +16,60 @@ interface IProps {
   selTags: string[];
 }
 
-interface IState {
-  btnData: ToggleButtonData[];
+function mapTagsOnBtns(tags: string[], selTags: string[]) {
+  return tags
+    .map(
+      (tag) =>
+        ({
+          name: tag,
+          checked: selTags.includes(tag),
+          label: i18n[tag as keyof typeof i18n],
+        } as ToggleButtonData)
+    )
+    .sort((a, b) => a.label.length - b.label.length);
 }
 
-export default class TagsSelector extends React.Component<IProps, IState> {
-  constructor(props: IProps) {
-    super(props);
-    this.state = {
-      btnData: this.mapTagsOnBtns(this.props.tags, this.props.selTags),
-    };
-  }
-
-  componentDidMount() {
+export default function TagsSelector(props: TagsSelectorProps) {
+  useEffect(() => {
     document?.querySelector("body")?.scrollTo(0, 0);
-  }
+  }, []);
 
-  mapTagsOnBtns(tags: string[], selTags: string[]) {
-    return tags
-      .map(
-        tag =>
-          ({
-            name: tag,
-            checked: selTags.includes(tag),
-            label: i18n[tag as keyof typeof i18n],
-          } as ToggleButtonData)
-      )
-      .sort((a, b) => a.label.length - b.label.length);
-  }
+  const [btnData, setBtnData] = useState(mapTagsOnBtns(props.tags, props.selTags));
 
-  renderBtns() {
-    return this.state.btnData.map((btn, index) => (
+  function renderBtns() {
+    return btnData.map((btn, index) => (
       <button
         className={`toggle-btn ${btn.checked ? "checked-btn" : "reg-btn"}`}
         key={index}
         type="button"
-        onClick={this.onToggleBtnClick.bind(this, index)}
+        onClick={onToggleBtnClick.bind(null, index)}
       >
         <div className={`toggle-btn-label ${btn.checked ? "checked-label" : ""}`}>{btn.label}</div>
       </button>
     ));
   }
 
-  onToggleBtnClick(index: number) {
-    const btns = this.state.btnData;
-    btns[index].checked = !btns[index].checked;
-    this.setState({ btnData: btns });
-    if (this.props.onUpdate !== undefined) {
-      this.props.onUpdate(btns.filter(cb => cb.checked).map(cb => cb.name));
-    }
+  function onToggleBtnClick(index: number) {
+    const updatedBtns = btnData.map((btn, btnIdx) => {
+      if (btnIdx === index) {
+        return { ...btn, checked: !btn.checked };
+      }
+      return btn;
+    });
+
+    setBtnData(updatedBtns);
+    props.onUpdate?.(updatedBtns.filter((cb) => cb.checked).map((cb) => cb.name));
   }
 
-  render() {
-    return (
-      // <div className="outter-container">
-      <div className="page-container">
-        <h3 className="tag-header">{this.props.header}</h3>
-        <div className="tag-container">{this.renderBtns.call(this)}</div>
-        <button className="tag-btn" onClick={this.props.onExit}>
-          <span>{i18n["next_page"]} →</span>
-        </button>
-      </div>
-      //   </div>
-    );
-  }
+  return (
+    // <div className="outter-container">
+    <div className="page-container">
+      <h3 className="tag-header">{props.header}</h3>
+      <div className="tag-container">{renderBtns()}</div>
+      <button className="tag-btn" onClick={props.onExit}>
+        <span>{i18n["next_page"]} →</span>
+      </button>
+    </div>
+    //   </div>
+  );
 }

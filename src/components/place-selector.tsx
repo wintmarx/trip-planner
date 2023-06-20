@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import ym from "react-yandex-metrika";
 import "../css/place-selector.css";
 import i18n from "../assets/i18n/locale/ru.json";
@@ -13,146 +13,148 @@ type PlaceState = {
   placeData: PlaceData;
 };
 
-interface IProps {
+type PlaceSelectorProps = {
   onUpdate?: (selPlaces: string[]) => void;
   onExit?: () => void;
   debug?: boolean;
   selTags: Tags;
   places: PlaceData[];
   selPlaces: string[];
+};
+
+function getPlaceScore(place: PlaceData, selTags: Tags) {
+  const pMatch = place.tags.places.filter((tag) => selTags.places.includes(tag)).length;
+  const tMatch = place.tags.themes.filter((tag) => selTags.themes.includes(tag)).length;
+  return (
+    3 * pMatch +
+    2 * tMatch +
+    (place.gmRating + place.taRating) / 10 +
+    Math.log10(place.gmReviewsCnt + place.taReviewsCnt + 1) / 10
+  );
 }
 
-interface IState {
-  cards: PlaceState[];
-  infoIndex: number;
-}
+export default function PlaceSelector(props: PlaceSelectorProps) {
+  function loadCards() {
+    type PlacesRating = { [id: string]: number };
+    const placesRating: PlacesRating = Object.fromEntries(
+      props.places.map((place) => {
+        return [place.name, getPlaceScore(place, props.selTags)];
+      })
+    );
 
-export default class PlaceSelector extends React.Component<IProps, IState> {
-  constructor(props: IProps) {
-    super(props);
-
-    const dict: { [id: string]: number } = {};
-
-    this.props.places.forEach(place => {
-      const pMatch = place.tags.places.filter(tag => this.props.selTags.places.includes(tag)).length;
-      const tMatch = place.tags.themes.filter(tag => this.props.selTags.themes.includes(tag)).length;
-      dict[place.name] =
-        3 * pMatch +
-        2 * tMatch +
-        (place.gmRating + place.taRating) / 10 +
-        Math.log10(place.gmReviewsCnt + place.taReviewsCnt + 1) / 10;
+    const sorted = props.places.sort((a: PlaceData, b: PlaceData) => {
+      return placesRating[b.name] - placesRating[a.name];
     });
 
-    const sorted = this.props.places.sort((a: PlaceData, b: PlaceData) => {
-      return dict[b.name] - dict[a.name];
-    });
-
-    const cards: PlaceState[] = sorted.map(
-      place =>
+    return sorted.map(
+      (place) =>
         ({
-          checked: this.props.selPlaces.includes(place.id),
+          checked: props.selPlaces.includes(place.id),
           label: place.name,
-          score: dict[place.name],
+          score: placesRating[place.name],
           placeData: place,
         } as PlaceState)
     );
-
-    this.state = { cards: cards, infoIndex: -1 };
   }
 
-  componentDidMount() {
+  const [cards, setCards] = useState(loadCards());
+  const [infoIndex, setInfoIndex] = useState(-1);
+
+  useEffect(() => {
     document?.querySelector("body")?.scrollTo(0, 0);
+  }, []);
+
+  function onCardClick(index: number, checked: boolean, e: any) {
+    const updatedCards = cards.map((card, cardIdx) => {
+      if (cardIdx == index) {
+        return { ...card, checked: checked };
+      }
+      return card;
+    });
+
+    setCards(updatedCards);
+    props.onUpdate?.(updatedCards.filter((card) => card.checked).map((card) => card.placeData.id));
   }
 
-  onCardClick(index: number, checked: boolean, e: any) {
-    const { cards } = this.state;
-    cards[index].checked = checked;
-    this.setState({ cards: cards });
-    if (this.props.onUpdate !== undefined) {
-      this.props.onUpdate(cards.filter(card => card.checked).map(card => card.placeData.id));
-    }
+  function onReset() {
+    setCards(
+      cards.map((card) => {
+        return { ...card, checked: false };
+      })
+    );
+
+    props.onUpdate?.([]);
   }
 
-  onReset() {
-    const { cards } = this.state;
-    cards.forEach(el => (el.checked = false));
-    this.setState({ cards: cards });
-    if (this.props.onUpdate !== undefined) {
-      this.props.onUpdate([]);
-    }
-  }
-
-  onClickInfo(index: number, e: any) {
+  function onClickInfo(index: number, e: any) {
     e.stopPropagation();
-    if (index == this.state.infoIndex) {
+    if (index == infoIndex) {
       index = -1;
     } else {
       ym("reachGoal", "place-info");
     }
-    this.setState({ infoIndex: index });
+    setInfoIndex(index);
   }
 
-  renderCards() {
-    return this.state.cards.map((card, index) => (
+  function renderCards() {
+    return cards.map((card, index) => (
       <PlaceCard
         key={index}
         checked={card.checked}
-        debug={this.props.debug}
+        debug={props.debug}
         label={card.label}
         score={card.score}
         placeData={card.placeData}
-        showInfo={index == this.state.infoIndex}
-        onInfoClick={this.onClickInfo.bind(this, index)}
-        onClick={this.onCardClick.bind(this, index)}
+        showInfo={index == infoIndex}
+        onInfoClick={onClickInfo.bind(null, index)}
+        onClick={onCardClick.bind(null, index)}
       />
     ));
   }
 
-  getConsumedTime() {
+  function getConsumedTime() {
     let time = 0;
-    this.state.cards.filter(card => card.checked).forEach(it => (time += it.placeData.ttv));
+    cards.filter((card) => card.checked).forEach((it) => (time += it.placeData.ttv));
     return time;
   }
 
-  isTimelineHidden() {
-    return this.getConsumedTime.call(this) == 0;
+  function isTimelineHidden() {
+    return getConsumedTime() == 0;
   }
 
-  render() {
-    return (
-      <>
-        <h3 className="places-header">{i18n["select_places"]}</h3>
-        <p
-          className="places-desc"
-          //   style={{
-          //     opacity: `${
-          //       this.isTimelineHidden.call(this) ? "inherit" : "0"
-          //     }`,
-          //     transform: `scaleY(${
-          //         this.isTimelineHidden.call(this) ? "1" : "0"
-          //       })`
-          //   }}
-        >
-          {i18n["select_places_help"]}
-        </p>
-        <div
-          className="cards-container"
-          style={{
-            marginBottom: `${this.isTimelineHidden.call(this) ? "inherit" : "max(11vh, 140px)"}`,
-          }}
-        >
-          {this.renderCards.call(this)}
-        </div>
-        <Timeline
-          hidden={this.isTimelineHidden.call(this)}
-          time={this.getConsumedTime.call(this)}
-          minDayTime={60}
-          maxDayTime={720}
-          defaultDayTime={480}
-          onExit={this.props.onExit}
-          onReset={this.onReset.bind(this)}
-        />
-      </>
-    );
-  }
+  return (
+    <>
+      <h3 className="places-header">{i18n["select_places"]}</h3>
+      <p
+        className="places-desc"
+        //   style={{
+        //     opacity: `${
+        //       isTimelineHidden() ? "inherit" : "0"
+        //     }`,
+        //     transform: `scaleY(${
+        //         isTimelineHidden() ? "1" : "0"
+        //       })`
+        //   }}
+      >
+        {i18n["select_places_help"]}
+      </p>
+      <div
+        className="cards-container"
+        style={{
+          marginBottom: `${isTimelineHidden() ? "inherit" : "max(11vh, 140px)"}`,
+        }}
+      >
+        {renderCards()}
+      </div>
+      <Timeline
+        hidden={isTimelineHidden()}
+        time={getConsumedTime()}
+        minDayTime={60}
+        maxDayTime={720}
+        defaultDayTime={480}
+        onExit={props.onExit}
+        onReset={onReset}
+      />
+    </>
+  );
 }
