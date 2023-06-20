@@ -5,6 +5,7 @@ import Greetings from "./greetings";
 import Layout from "./layout";
 import PlaceSelector from "./place-selector";
 import i18n from "../assets/i18n/locale/ru.json";
+import placesIntl from "../assets/i18n/places/ru.json";
 import ym from "react-yandex-metrika";
 import { Api, TripRequestPlace } from "../api";
 import TabSelector, { Tab } from "./tab-selector";
@@ -33,9 +34,7 @@ export type Tags = {
 };
 
 export type PlaceData = {
-  id: string;
-  name: string;
-  description: string;
+  id: number;
   photo: string;
   ttv: number;
   tags: Tags;
@@ -57,7 +56,7 @@ interface AppProps {
 interface AppState {
   page: Page;
   selTags: Tags;
-  selPlaces: string[];
+  selPlaces: number[];
   showLoading: boolean;
   apiError: boolean;
   isPolicyAccepted: boolean;
@@ -220,7 +219,7 @@ export function App(props: AppProps) {
     ReactGA.send({ hitType: "pageview", title: Page[Page.Places] });
   }
 
-  function onPlacesSelected(newSelPlaces: string[]) {
+  function onPlacesSelected(newSelPlaces: number[]) {
     setSelPlaces(newSelPlaces);
     ym("reachGoal", "places", { selPlaces: newSelPlaces });
     ReactGA.event({
@@ -248,18 +247,18 @@ export function App(props: AppProps) {
     setApiError(false);
     const requestPlaces = props.places
       .filter((place) => selPlaces.includes(place.id))
-      .map(
-        (place) =>
-          ({
-            desc: place.description,
-            title: place.name,
-            ttv: place.ttv,
-            googleLink: place.googleLink,
-            twogisLink: place.twogisLink,
-            yandexLink: place.yandexLink,
-            photo: place.photo.split("/").pop(),
-          } as TripRequestPlace)
-      );
+      .map((place) => {
+        const placeIntl = placesIntl.find((el) => el.id == place.id);
+        return {
+          desc: placeIntl?.desc || "description",
+          title: placeIntl?.name || "title",
+          ttv: place.ttv,
+          googleLink: place.googleLink,
+          twogisLink: place.twogisLink,
+          yandexLink: place.yandexLink,
+          photo: place.photo.split("/").pop(),
+        } as TripRequestPlace;
+      });
 
     api
       .requestTrip({ email: email, places: requestPlaces })

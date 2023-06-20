@@ -7,17 +7,12 @@ const CSV_ACTIVITIES_QUERY = graphql`
   query {
     allActivitiesCsv {
       nodes {
-        name
-        description
-        who_add
+        id
         twogis_nav
         google_nav
         yandex_nav
         photo
-        coordinates
         time_to_visit
-        price
-        working_hours
         number_of_reviews_in_gm
         average_gm_rating
         number_of_ta_reviews
@@ -49,8 +44,7 @@ const CSV_ACTIVITIES_QUERY = graphql`
 `;
 
 type ActivityCSV = {
-  name: string;
-  description: string;
+  id: string;
   photo: string;
   time_to_visit: string;
   number_of_reviews_in_gm: string;
@@ -82,10 +76,8 @@ function getQueryVariable(variable: string, location: Location) {
 
 function convertActivityToPlaceData(tags: Tags, activity: ActivityCSV) {
   return {
-    id: activity.photo,
-    name: activity.name,
-    description: activity.description,
-    photo: `photo/${activity.photo}.jpg`,
+    id: Number(activity.id),
+    photo: activity.photo,
     ttv: Number(activity.time_to_visit),
     gmReviewsCnt: Number(activity.number_of_reviews_in_gm),
     gmRating: Number(activity.average_gm_rating),

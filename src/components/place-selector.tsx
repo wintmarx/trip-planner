@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import ym from "react-yandex-metrika";
 import "../css/place-selector.css";
 import i18n from "../assets/i18n/locale/ru.json";
+import placesIntl from "../assets/i18n/places/ru.json";
 import { PlaceData, Tags } from "./app";
 import PlaceCard from "./place-card";
 import Timeline from "./timeline";
@@ -14,12 +15,12 @@ type PlaceState = {
 };
 
 type PlaceSelectorProps = {
-  onUpdate?: (selPlaces: string[]) => void;
+  onUpdate?: (selPlaces: number[]) => void;
   onExit?: () => void;
   debug?: boolean;
   selTags: Tags;
   places: PlaceData[];
-  selPlaces: string[];
+  selPlaces: number[];
 };
 
 function getPlaceScore(place: PlaceData, selTags: Tags) {
@@ -35,23 +36,23 @@ function getPlaceScore(place: PlaceData, selTags: Tags) {
 
 export default function PlaceSelector(props: PlaceSelectorProps) {
   function loadCards() {
-    type PlacesRating = { [id: string]: number };
+    type PlacesRating = { [id: number]: number };
     const placesRating: PlacesRating = Object.fromEntries(
       props.places.map((place) => {
-        return [place.name, getPlaceScore(place, props.selTags)];
+        return [place.id, getPlaceScore(place, props.selTags)];
       })
     );
 
     const sorted = props.places.sort((a: PlaceData, b: PlaceData) => {
-      return placesRating[b.name] - placesRating[a.name];
+      return placesRating[b.id] - placesRating[a.id];
     });
 
     return sorted.map(
       (place) =>
         ({
           checked: props.selPlaces.includes(place.id),
-          label: place.name,
-          score: placesRating[place.name],
+          label: placesIntl.find((el) => el.id == place.id)?.name || "title",
+          score: placesRating[place.id],
           placeData: place,
         } as PlaceState)
     );

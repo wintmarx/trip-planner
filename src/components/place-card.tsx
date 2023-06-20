@@ -1,6 +1,7 @@
 import React from "react";
 import { PlaceData } from "./app";
 import i18n from "../assets/i18n/locale/ru.json";
+import placesIntl from "../assets/i18n/places/ru.json";
 import "../css/place-card.css";
 
 interface PlaceCardProps {
@@ -47,7 +48,7 @@ export default function PlaceCard(props: PlaceCardProps) {
           <h1>{i18n["info_header"]}</h1>
           <img className="close-icon" src="close_icon.svg" onClick={props.onInfoClick} />
         </div>
-        <p>{props.placeData.description}</p>
+        <p>{placesIntl.find((el) => el.id == props.placeData.id)?.desc || "description"}</p>
       </div>
     </div>
   );
